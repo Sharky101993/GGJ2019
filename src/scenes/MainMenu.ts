@@ -44,7 +44,7 @@ export class MainMenu extends Phaser.Scene {
 
     update() {
         if (this.startKey.isDown) {
-            this.scene.start('GameScene');
+            this.scene.start('DrivingLevel');
         }
     }
 }

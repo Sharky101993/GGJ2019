@@ -8,8 +8,93 @@
       },
       {
         "type": "image",
+        "key": "drivingLevelBackground",
+        "url": "assets/images/driving_level_bg.png"
+      },
+      {
+        "type": "image",
         "key": "bird",
         "url": "assets/images/bird.png"
+      },
+      {
+        "type": "image",
+        "key": "copCar",
+        "url": "assets/images/cop_car.png"
+      },
+      {
+        "type": "image",
+        "key": "hat0",
+        "url": "assets/images/hats/hat_0.png"
+      },
+      {
+        "type": "image",
+        "key": "hat1",
+        "url": "assets/images/hats/hat_1.png"
+      },
+      {
+        "type": "image",
+        "key": "hat2",
+        "url": "assets/images/hats/hat_2.png"
+      },
+      {
+        "type": "image",
+        "key": "hat3",
+        "url": "assets/images/hats/hat_3.png"
+      },
+      {
+        "type": "image",
+        "key": "hat4",
+        "url": "assets/images/hats/hat_4.png"
+      },
+      {
+        "type": "image",
+        "key": "hat5",
+        "url": "assets/images/hats/hat_5.png"
+      },
+      {
+        "type": "image",
+        "key": "hat6",
+        "url": "assets/images/hats/hat_6.png"
+      },
+      {
+        "type": "image",
+        "key": "hat7",
+        "url": "assets/images/hats/hat_7.png"
+      },
+      {
+        "type": "image",
+        "key": "hat8",
+        "url": "assets/images/hats/hat_8.png"
+      },
+      {
+        "type": "image",
+        "key": "hat9",
+        "url": "assets/images/hats/hat_9.png"
+      },
+      {
+        "type": "image",
+        "key": "hat10",
+        "url": "assets/images/hats/hat_10.png"
+      },
+      {
+        "type": "image",
+        "key": "hat11",
+        "url": "assets/images/hats/hat_11.png"
+      },
+      {
+        "type": "image",
+        "key": "hatsplosion",
+        "url": "assets/images/hatsplosion.png"
+      },
+      {
+        "type": "image",
+        "key": "caperCar",
+        "url": "assets/images/cap_caper_car.png"
+      },
+      {
+        "type": "image",
+        "key": "dynamite",
+        "url": "assets/images/dynamite.png"
       },
       {
         "type": "spritesheet",

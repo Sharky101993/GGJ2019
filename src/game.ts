@@ -4,15 +4,16 @@ import 'phaser';
 import { Boot } from './scenes/Boot';
 import { MainMenu } from './scenes/MainMenu';
 import { GameScene } from './scenes/GameScene';
+import { DrivingLevel } from './scenes/DrivingLevel';
 
 // main game configuration
 const config: GameConfig = {
-  title: 'Boilerplate',
+  title: 'Home is Where the Hat is',
   width: 800,
   height: 600,
   type: Phaser.AUTO,
   parent: 'game',
-  scene: [Boot, MainMenu, GameScene],
+  scene: [Boot, MainMenu, GameScene, DrivingLevel],
   input: {
     keyboard: true,
     mouse: false,
@@ -23,7 +24,7 @@ const config: GameConfig = {
     default: 'arcade',
     arcade: {
       gravity: { y: 300 },
-      debug: false
+      debug: true,
     }
   },
   backgroundColor: '#98d687',
