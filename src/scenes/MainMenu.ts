@@ -40,7 +40,7 @@ export class MainMenu extends Phaser.Scene {
             this.add.text(
                 100,
                 this.sys.canvas.height / 2 - 10,
-                'S: PLAY FIGHT\nD: PLAY DRIVING',
+                'S: PLAY FIGHT\nD: PLAY DRIVING\nF: PLAY WIND',
                 {
                     fontFamily: 'Cavalcade-Shadow',
                     fontSize: 30

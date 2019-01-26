@@ -58,7 +58,7 @@ export class WindScene extends Phaser.Scene {
             y: 0,
             key: 'truck'
         });
-        this.physics.add.collider(this.bird, this.truck, this.endWindScene);
+        this.physics.add.collider(this.bird, this.truck, this.endWindScene, null, this);
 
         // Add bird
         this.add.existing(this.bird);
@@ -129,6 +129,6 @@ export class WindScene extends Phaser.Scene {
     }
 
     private restartGame(): void {
-        this.scene.start('MainMenu');
+        // this.scene.start('MainMenu');
     }
 }
