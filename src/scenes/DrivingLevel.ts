@@ -8,7 +8,7 @@ const OFFSCREEN_EVENT = 'offscreen-event';
 const mphPxScale = 0.65;
 const NUM_HATS = 12;
 
-const HATS_TO_WIN = 5;
+const HATS_TO_WIN = 10;
 
 export class DrivingLevel extends Phaser.Scene {
     private startKey: Phaser.Input.Keyboard.Key;
@@ -123,7 +123,7 @@ export class DrivingLevel extends Phaser.Scene {
         } else {
             this.throwBomb();
         }
-        this.throwingStuffTimer.reset({ delay: Phaser.Math.Between(300,1000), callback: this.throwRandomItem, callbackScope: this, repeat: 1});
+        this.throwingStuffTimer.reset({ delay: Phaser.Math.Between(200,750), callback: this.throwRandomItem, callbackScope: this, repeat: 1});
     }
 
     private throwHat(): void {
@@ -174,16 +174,41 @@ export class DrivingLevel extends Phaser.Scene {
     }
 
     private dropHats(): void {
-        //TODO
+        for (let i = 0; i < 5; i++) {
+            const hatKey = Math.floor(Math.random()*NUM_HATS);
+               const hat = new Hat({
+                scene: this,
+                  x: this.copCar.x,
+                 y: this.copCar.y,
+                 key: `hat${hatKey}`,
+                 randomVelocity: true,
+            });
+              this.add.existing(hat);
+              this.add.tween({
+                targets: hat,
+                duration: 1500,
+                alpha: 0,
+                onComplete: (e) => {
+                    e.targets.forEach(t => {
+                        t.destroy(this);
+                    });
+                },
+            });
+        }
+        this.numHatHits = 0;
+        this.updateHatCountText();
+    }
+
+    private updateHatCountText(): void {
+        this.hatCountText.setText(`Hit: ${this.numHatHits} hats`);
     }
 
     private hitHat(object1, object2) {
         const hat = this.objectWithType(object1, object2, ITEM_TYPE_HAT);
         this.hats.remove(hat, true, true);
         this.numHatHits++;
-        this.hatCountText.setText(`Hit: ${this.numHatHits} hats`);
+        this.updateHatCountText();
         if (this.numHatHits === HATS_TO_WIN) {
-            // REPLACE WITH WIN
             for (let i = 0; i < 100; i++) {
              const randX = Math.floor(Math.random()*800);
               const randY =  Math.floor(Math.random()*600);
@@ -197,6 +222,13 @@ export class DrivingLevel extends Phaser.Scene {
                this.explosions.add(explosion);
                this.add.existing(explosion);
             }
+            this.time.addEvent({
+                delay:1000,
+                callbackScope:this,
+                callback: () => {
+                    this.scene.start('FightScene', this.scene);
+                },
+            })
         }
     }
 
@@ -364,13 +396,16 @@ class Hat extends Phaser.GameObjects.Sprite {
 
     constructor(params) {
         super(params.scene, params.x, params.y, params.key, params.frame);
-
         // image
         this.scene = params.scene;
-        this.angle = 180;
         // physics
         params.scene.physics.world.enable(this);
-
+        if (params.randomVelocity) {
+            const magnitude = 160;
+            const angle = Math.floor(Math.random()*2*Math.PI);
+            this.body.setVelocityX(Math.cos(angle)*magnitude);
+            this.body.setVelocityY(Math.sin(angle)*magnitude);
+        }
         // animations & tweens
         this.anim = [
         ];
@@ -410,10 +445,3 @@ class Explosion extends Phaser.GameObjects.Sprite {
         }
     }
 }
-
-function uuidv4() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
-    });
-  }
