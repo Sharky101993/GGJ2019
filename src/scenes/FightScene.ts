@@ -41,7 +41,7 @@ export class FightScene extends Phaser.Scene {
         this.bg = this.add.tileSprite(400, 300, 800, 600, 'fightingLevelBackground');
         this.bg.setScale(1);
 
-        this.scoreText = this.add.text(this.sys.canvas.width / 2 - 14, 30, 'FIGHT!', {
+        this.scoreText = this.add.text(this.sys.canvas.width / 2 - 300, 30, 'TAKE OUT THAT \'COON GOON!', {
             fontFamily: 'Cavalcade-Shadow',
             fontSize: 40
         });

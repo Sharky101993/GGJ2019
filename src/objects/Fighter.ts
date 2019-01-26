@@ -5,7 +5,8 @@ export class Fighter extends Phaser.GameObjects.Sprite {
 	protected isThrowing: boolean = false;
 	protected throwTimer;
 
-	public projectiles: GameObjects.Group;
+    public projectiles: GameObjects.Group;
+    public isFacingRight: boolean = false;
 	public enemy: Fighter;
 
 	public setEnemy(enemy): void {
@@ -48,7 +49,7 @@ export class Fighter extends Phaser.GameObjects.Sprite {
     update(): void {
         //this.slowDown();
         this.handleMove();
-		this.scene.physics.overlap(this.enemy, this.projectiles, this.handleHitEnemy, null, this.scene);
+		this.scene.physics.overlap(this.enemy, this.projectiles, this.handleHitEnemy, null, this);
 		this.handleItemsOffScreen();
 	}
 
@@ -68,9 +69,7 @@ export class Fighter extends Phaser.GameObjects.Sprite {
     }
 
     protected slowDown(): void {
-        if (this.body.velocity.y !== 0) {
-			this.body.setVelocityY(0 - (this.body.velocity.y / 2) );
-        }
+       this.body.setVelocityY(0);
     }
 
     protected handleMove(): void {
@@ -95,6 +94,6 @@ export class Fighter extends Phaser.GameObjects.Sprite {
 		});
 		this.projectiles.add(projectile);
 		this.scene.add.existing(projectile);
-		projectile.fire(this, {x: -600, y: -150});
+		projectile.fire(this, {x: this.isFacingRight ? 300 : -600 , y: -150});
 	}
 }
