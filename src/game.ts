@@ -5,15 +5,16 @@ import { Boot } from './scenes/Boot';
 import { MainMenu } from './scenes/MainMenu';
 import { FightScene } from './scenes/FightScene';
 import { GameScene } from './scenes/GameScene';
+import { DrivingLevel } from './scenes/DrivingLevel';
 
 // main game configuration
 const config: GameConfig = {
-  title: 'Boilerplate',
+  title: 'Home is Where the Hat is',
   width: 800,
   height: 600,
   type: Phaser.AUTO,
   parent: 'game',
-  scene: [Boot, MainMenu, GameScene, FightScene],
+  scene: [Boot, MainMenu, GameScene, FightScene, DrivingLevel],
   input: {
     keyboard: true,
     mouse: false,

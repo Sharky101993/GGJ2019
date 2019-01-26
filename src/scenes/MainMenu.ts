@@ -2,7 +2,8 @@
  * Main menu.
  */
 export class MainMenu extends Phaser.Scene {
-    private startKey: Phaser.Input.Keyboard.Key;
+    private startFightKey: Phaser.Input.Keyboard.Key;
+    private startDrivingKey: Phaser.Input.Keyboard.Key;
     private bitmapTexts: Phaser.GameObjects.BitmapText[] = [];
     private texts: Phaser.GameObjects.Text[] = [];
 
@@ -13,10 +14,12 @@ export class MainMenu extends Phaser.Scene {
     }
 
     init() {
-        this.startKey = this.input.keyboard.addKey(
+        this.startFightKey = this.input.keyboard.addKey(
             Phaser.Input.Keyboard.KeyCodes.S
         );
-        this.startKey.isDown = false;
+        this.startDrivingKey = this.input.keyboard.addKey(
+            Phaser.Input.Keyboard.KeyCodes.D
+        );
     }
 
     create() {
@@ -31,9 +34,9 @@ export class MainMenu extends Phaser.Scene {
                 }
             ),
             this.add.text(
-                this.sys.canvas.width / 2 - 50,
+                100,
                 this.sys.canvas.height / 2 - 10,
-                'S: PLAY',
+                'S: PLAY FIGHT\nD: PLAY DRIVING',
                 {
                     fontFamily: 'Cavalcade-Shadow',
                     fontSize: 30
@@ -43,8 +46,11 @@ export class MainMenu extends Phaser.Scene {
     }
 
     update() {
-        if (this.startKey.isDown) {
+        if (this.startFightKey.isDown) {
             this.scene.start('FightScene');
+        }
+        if (this.startDrivingKey.isDown) {
+            this.scene.start('DrivingLevel');
         }
     }
 }
