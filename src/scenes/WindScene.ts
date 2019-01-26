@@ -48,16 +48,16 @@ export class WindScene extends Phaser.Scene {
 
         this.bird = new Bird({
             scene: this,
-            x: 50,
-            y: 100,
+            x: 0,
+            y: 500,
             key: 'bird'
         });
         this.physics.add.collider(this.bird, this.pipes, this.hitObstacle, null, this);
 
         this.truck = new Truck({
             scene: this,
-            x: 700,
-            y: 0,
+            x: 730,
+            y: 50,
             key: 'truck'
         });
         this.physics.add.collider(this.bird, this.truck, this.endWindScene, null, this);
@@ -101,19 +101,28 @@ export class WindScene extends Phaser.Scene {
 
     private addOnePipe(x, y, frame): void {
         // create a pipe at the position x and y
-        let pipe = new Pipe({
+        // let pipe = new Pipe({
+        //     scene: this,
+        //     x: x,
+        //     y: y,
+        //     frame: frame,
+        //     key: 'pipe'
+        // });
+        const rockPositions = [[29, 262], [193, 104], [456, 195], [577, 270], [185, 576], [241, 516], [286, 464], [321, 362], [394, 430], [486, 464], [614, 497], [115, 222], [615, 122], [615, 192], [615, 192], [750, 450]];
+        rockPositions.forEach(coords => {
+            let pipe = new Pipe({
             scene: this,
-            x: x,
-            y: y,
-            frame: frame,
-            key: 'pipe'
-        });
+            x: coords[0],
+            y: coords[1] - 100,
+            frame: null,
+            key: 'rock'
+            })
+            // add pipe to group
+            this.pipes.add(pipe);
 
-        // add pipe to group
-        this.pipes.add(pipe);
-
-        // add pipe to scene
-        this.add.existing(pipe);
+            // add pipe to scene
+            this.add.existing(pipe);
+        })
     }
 
     private addRowOfPipes(): void {
