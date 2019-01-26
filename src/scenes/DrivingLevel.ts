@@ -38,7 +38,7 @@ export class DrivingLevel extends Phaser.Scene {
         });
     }
 
-    init() {
+    init(data) {
         this.speed = 35;
         this.numHatHits = 0;
         this.hatPower = 5;
@@ -46,6 +46,7 @@ export class DrivingLevel extends Phaser.Scene {
         this.bombs = this.add.group({ classType: Bomb });
         this.hats = this.add.group({ classType: Hat });
         this.explosions = this.add.group({ classType: Explosion });
+        console.log(data.hp);
     }
 
     create() {

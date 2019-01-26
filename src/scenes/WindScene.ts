@@ -13,6 +13,7 @@ export class WindScene extends Phaser.Scene {
     private timer: Phaser.Time.TimerEvent;
     private score: number;
     private scoreText: Phaser.GameObjects.Text;
+    private hp: number;
 
     constructor() {
         super({
@@ -29,13 +30,14 @@ export class WindScene extends Phaser.Scene {
         // variables
         this.timer = undefined;
         this.score = -1;
+        this.hp = 5;
     }
 
     create(): void {
         this.bg = this.add.tileSprite(0, 0, 800, 600, 'background');
         this.bg.setScale(4);
 
-        this.scoreText = this.add.text(this.sys.canvas.width / 2 - 14, 30, '0', {
+        this.scoreText = this.add.text(14, 30, '0', {
             fontFamily: 'Cavalcade-Shadow',
             fontSize: 40
         });
@@ -50,7 +52,7 @@ export class WindScene extends Phaser.Scene {
             y: 100,
             key: 'bird'
         });
-        this.physics.add.collider(this.bird, this.pipes);
+        this.physics.add.collider(this.bird, this.pipes, this.hitObstacle, null, this);
 
         this.truck = new Truck({
             scene: this,
@@ -85,8 +87,16 @@ export class WindScene extends Phaser.Scene {
         }
     }
 
+    private hitObstacle(): void {
+        this.hp--;
+        this.scoreText.setText('' + this.hp);
+        if (this.hp <= 0) {
+            this.restartGame();
+        }
+    }
+
     private endWindScene(): void {
-        this.scene.start('DrivingLevel', this.scene);
+        this.scene.start('DrivingLevel', {hp: this.hp});
     }
 
     private addOnePipe(x, y, frame): void {
@@ -109,7 +119,7 @@ export class WindScene extends Phaser.Scene {
     private addRowOfPipes(): void {
         // update the score
         this.score += 1;
-        this.scoreText.setText('' + this.score);
+        this.scoreText.setText('' + this.hp);
 
         // randomly pick a number between 1 and 5
         let hole = 3;
@@ -129,6 +139,6 @@ export class WindScene extends Phaser.Scene {
     }
 
     private restartGame(): void {
-        // this.scene.start('MainMenu');
+        this.scene.start('MainMenu');
     }
 }
