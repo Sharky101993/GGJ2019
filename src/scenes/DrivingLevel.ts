@@ -26,10 +26,10 @@ export class DrivingLevel extends Phaser.Scene {
     // variables
     private speed: number;
     private numHatHits: number;
-    private numBombHits: number;
+    private hatPower: number;
 
     private hatCountText: Phaser.GameObjects.Text;
-    private bombCountText: Phaser.GameObjects.Text;
+    private hatPowerText: Phaser.GameObjects.Text;
     private throwingStuffTimer: Phaser.Time.TimerEvent;
 
     constructor() {
@@ -41,7 +41,7 @@ export class DrivingLevel extends Phaser.Scene {
     init() {
         this.speed = 35;
         this.numHatHits = 0;
-        this.numBombHits = 0;
+        this.hatPower = 5;
         this.bg = null;
         this.bombs = this.add.group({ classType: Bomb });
         this.hats = this.add.group({ classType: Hat });
@@ -56,19 +56,20 @@ export class DrivingLevel extends Phaser.Scene {
             `Hit: ${this.numHatHits} hats`,
             {
                 'fontFamily': 'Cavalcade-Shadow',
-                fontSize: 36
+                fontSize: 24
             }
         );
-        this.bombCountText = this.add.text(
+        this.hatPowerText = this.add.text(
             10,
-            40,
-            `Hit: ${this.numBombHits} bombs`,
+            50,
+            `Hat Power Left: ${this.hatPower}`,
             {
                 'fontFamily': 'Cavalcade-Shadow',
-                fontSize: 36
+                fontSize: 24
             }
         );
         this.hatCountText.setDepth(10);
+        this.hatPowerText.setDepth(11);
         this.copCar = new CopCar({
             scene: this,
             x: 440,
@@ -158,8 +159,8 @@ export class DrivingLevel extends Phaser.Scene {
 
     private hitBomb(object1, object2): void {
        const bomb = this.objectWithType(object1, object2, ITEM_TYPE_BOMB);
-       this.numBombHits++;
-       this.bombCountText.setText(`Hit: ${this.numBombHits} bombs`);
+       this.hatPower--;
+       this.hatPowerText.setText(`Hat Power Left: ${this.hatPower}`);
        this.bombs.remove(bomb, true, true);
        // explosion
        const explosion = new Explosion({
@@ -171,6 +172,11 @@ export class DrivingLevel extends Phaser.Scene {
        this.explosions.add(explosion);
        this.add.existing(explosion);
        this.dropHats();
+       if (this.hatPower === 0) {
+           this.crazyExplosion(() => {
+            this.scene.start('DrivingLevel', this.scene);
+           });
+       }
     }
 
     private dropHats(): void {
@@ -203,32 +209,51 @@ export class DrivingLevel extends Phaser.Scene {
         this.hatCountText.setText(`Hit: ${this.numHatHits} hats`);
     }
 
+    private crazyExplosion(callback):void {
+        for (let i = 0; i < 100; i++) {
+            const randX = Math.floor(Math.random()*800);
+             const randY =  Math.floor(Math.random()*600);
+               const explosion = new Explosion({
+              scene: this,
+               x: randX,
+              y: randY,
+              key: 'hatsplosion',
+              dontFixToCar: true,
+            });
+              this.explosions.add(explosion);
+              this.add.existing(explosion);
+           }
+           this.time.addEvent({
+               delay:1000,
+               callbackScope:this,
+               callback: callback,
+           });
+    }
+
     private hitHat(object1, object2) {
-        const hat = this.objectWithType(object1, object2, ITEM_TYPE_HAT);
-        this.hats.remove(hat, true, true);
         this.numHatHits++;
         this.updateHatCountText();
         if (this.numHatHits === HATS_TO_WIN) {
-            for (let i = 0; i < 100; i++) {
-             const randX = Math.floor(Math.random()*800);
-              const randY =  Math.floor(Math.random()*600);
-                const explosion = new Explosion({
-               scene: this,
-                x: randX,
-               y: randY,
-               key: 'hatsplosion',
-               dontFixToCar: true,
-             });
-               this.explosions.add(explosion);
-               this.add.existing(explosion);
-            }
-            this.time.addEvent({
-                delay:1000,
-                callbackScope:this,
-                callback: () => {
-                    this.scene.start('FightScene', this.scene);
+            const hat = this.objectWithType(object1, object2, ITEM_TYPE_HAT);
+            this.hats.remove(hat, true, true);
+            this.crazyExplosion(() => {
+                this.scene.start('FightScene', this.scene);
+            });
+        } else {
+            const hat = this.objectWithType(object1, object2, ITEM_TYPE_HAT);
+            this.hats.remove(hat, false, false);
+            this.add.tween({
+                targets: hat,
+                duration: 1500,
+                alpha: 0,
+                x: this.copCar.x,
+                y: this.copCar.y,
+                onComplete: (e) => {
+                    e.targets.forEach(t => {
+                        t.destroy(this);
+                    });
                 },
-            })
+            });
         }
     }
 
