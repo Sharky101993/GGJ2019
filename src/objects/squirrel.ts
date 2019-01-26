@@ -44,7 +44,7 @@ export class Squirrel extends Phaser.GameObjects.Sprite {
 		];
 
 		this.enemy = params.enemy;
-		this.acorns = this.scene.add.group({classType: Projectile, runChildUpdate: true});
+		this.acorns = this.scene.add.group({classType: Projectile});
 
         // input
         this.climbUpKey = params.scene.input.keyboard.addKey(
@@ -108,9 +108,10 @@ export class Squirrel extends Phaser.GameObjects.Sprite {
 			key: 'sandwich',
 			visible: true
 		});
+		this.acorns.add(acorn);
 		this.scene.add.existing(acorn);
 		acorn.fire(this, {x: 300, y: -300});
-		this.scene.physics.overlap(this.enemy, acorn, () => console.log('hit'), null, this.scene);
+		this.scene.physics.overlap(this.enemy, this.acorns, () => console.log('hit'), null, this.scene);
 	}
 
     // private isOffTheScreen(): void {

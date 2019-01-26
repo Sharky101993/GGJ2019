@@ -1,4 +1,5 @@
 import { Projectile } from '../objects/Projectile';
+import { GameObjects } from 'phaser';
 export class Raccoon extends Phaser.GameObjects.Sprite {
 	private climbUpKey: Phaser.Input.Keyboard.Key;
     private climbDownKey: Phaser.Input.Keyboard.Key;
@@ -7,6 +8,9 @@ export class Raccoon extends Phaser.GameObjects.Sprite {
     private isClimbing: boolean = false;
 	private isThrowing: boolean = false;
 	private throwTimer;
+	
+	public acorns: GameObjects.Group;
+	public enemy: Raccoon;
 
     public getDead(): boolean {
         return this.isDead;
@@ -15,6 +19,10 @@ export class Raccoon extends Phaser.GameObjects.Sprite {
     public setDead(dead): void {
         this.isDead = dead;
     }
+
+	public setEnemy(enemy): void {
+		this.enemy = enemy;
+	}
 
     constructor(params) {
         super(params.scene, params.x, params.y, params.key, params.frame);
@@ -96,6 +104,6 @@ export class Raccoon extends Phaser.GameObjects.Sprite {
 		});
 		this.scene.add.existing(acorn);
 		acorn.fire(this, {x: -300, y: -300});
-		this.scene.physics.overlap(this.enemy, acorn, () => console.log('hit'), null, this.scene);
+		this.scene.physics.overlap(this.enemy, this.acorns, () => console.log('hit'), null, this.scene);
 	}
 }

@@ -71,6 +71,8 @@ export class FightScene extends Phaser.Scene {
             enemy: this.raccoon
         })
 
+        this.raccoon.setEnemy(this.squirrel);
+
         // Add squirrel
         this.add.existing(this.squirrel);
 
