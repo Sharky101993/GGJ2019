@@ -22,6 +22,9 @@ export class DrivingLevel extends Phaser.Scene {
     private bombs: Phaser.GameObjects.Group;
     private hats: Phaser.GameObjects.Group;
     private explosions: Phaser.GameObjects.Group;
+    private explodeSound: Phaser.Sound.BaseSound;
+    private sirenSound: Phaser.Sound.BaseSound;
+    private engineSound: Phaser.Sound.BaseSound;
 
     // variables
     private speed: number;
@@ -41,12 +44,18 @@ export class DrivingLevel extends Phaser.Scene {
     init(data) {
         this.speed = 35;
         this.numHatHits = 0;
-        this.hatPower = 5;
         this.bg = null;
         this.bombs = this.add.group({ classType: Bomb });
         this.hats = this.add.group({ classType: Hat });
         this.explosions = this.add.group({ classType: Explosion });
-        console.log(data.hp);
+        this.hatPower = data.hp;
+        this.explodeSound = this.sound.add('level2Explosion');
+        this.sirenSound = this.sound.add('level2Siren', {
+            'loop': true,
+        });
+        this.engineSound = this.sound.add('level2Engine', {
+            'loop': true,
+        });
     }
 
     create() {
@@ -91,6 +100,8 @@ export class DrivingLevel extends Phaser.Scene {
             callbackScope: this,
             loop: false
         });
+        this.sirenSound.play();
+        //this.engineSound.play();
     }
 
     update() {
@@ -120,7 +131,7 @@ export class DrivingLevel extends Phaser.Scene {
     }
 
     private throwRandomItem():void {
-        if (Math.random() > 0.7) {
+        if (Math.random() > 0.8) {
             this.throwHat();
         } else {
             this.throwBomb();
@@ -159,6 +170,7 @@ export class DrivingLevel extends Phaser.Scene {
     }
 
     private hitBomb(object1, object2): void {
+        this.explodeSound.play();
        const bomb = this.objectWithType(object1, object2, ITEM_TYPE_BOMB);
        this.hatPower--;
        this.hatPowerText.setText(`Hat Power Left: ${this.hatPower}`);
@@ -175,7 +187,7 @@ export class DrivingLevel extends Phaser.Scene {
        this.dropHats();
        if (this.hatPower === 0) {
            this.crazyExplosion(() => {
-            this.scene.start('DrivingLevel', this.scene);
+            this.scene.start('WindScene', this.scene);
            });
        }
     }
@@ -227,7 +239,11 @@ export class DrivingLevel extends Phaser.Scene {
            this.time.addEvent({
                delay:1000,
                callbackScope:this,
-               callback: callback,
+               callback: () => {
+                this.sirenSound.stop();
+                //this.engineSound.stop();
+                callback();
+               },
            });
     }
 

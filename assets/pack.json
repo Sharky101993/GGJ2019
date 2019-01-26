@@ -119,6 +119,21 @@
         "type": "image",
         "key": "truck",
         "url": "assets/images/truck.png"
+      },
+      {
+        "type": "audio",
+        "key": "level2Explosion",
+        "url": "assets/audio/level_2/explosion.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "level2Siren",
+        "url": "assets/audio/level_2/siren.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "level2Engine",
+        "url": "assets/audio/level_2/engine_loop.mp3"
       }
     ]
   }
