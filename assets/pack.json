@@ -12,6 +12,16 @@
         "url": "assets/images/bird.png"
       },
       {
+        "type": "image",
+        "key": "squirrel",
+        "url": "assets/images/squirrel.png"
+      },
+      {
+        "type": "image",
+        "key": "raccoon",
+        "url": "assets/images/squirrel.png"
+      },
+      {
         "type": "spritesheet",
         "key": "pipe",
         "url": "assets/images/pipe.png",

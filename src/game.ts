@@ -3,6 +3,7 @@
 import 'phaser';
 import { Boot } from './scenes/Boot';
 import { MainMenu } from './scenes/MainMenu';
+import { FightScene } from './scenes/FightScene';
 import { GameScene } from './scenes/GameScene';
 
 // main game configuration
@@ -12,7 +13,7 @@ const config: GameConfig = {
   height: 600,
   type: Phaser.AUTO,
   parent: 'game',
-  scene: [Boot, MainMenu, GameScene],
+  scene: [Boot, MainMenu, GameScene, FightScene],
   input: {
     keyboard: true,
     mouse: false,
@@ -23,7 +24,7 @@ const config: GameConfig = {
     default: 'arcade',
     arcade: {
       gravity: { y: 300 },
-      debug: false
+      debug: true
     }
   },
   backgroundColor: '#98d687',
