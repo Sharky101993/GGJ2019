@@ -1,14 +1,14 @@
 import { Bird } from '../objects/Bird';
 import { Pipe } from '../objects/Pipe';
 import { Squirrel } from '../objects/Squirrel';
-import { Raccoon2 } from '../objects/Raccoon2';
+import { Raccoon } from '../objects/Raccoon';
 import { Projectile } from '../objects/Projectile';
 
 export class FightScene extends Phaser.Scene {
     // objects
     private bird: Bird;
     private squirrel: Squirrel;
-    private raccoon: Raccoon2;
+    private raccoon: Raccoon;
     private pipes: Phaser.GameObjects.Group;
     private acorns: Phaser.GameObjects.Group;
     private bg: Phaser.GameObjects.TileSprite;
@@ -38,8 +38,8 @@ export class FightScene extends Phaser.Scene {
     }
 
     create(): void {
-        this.bg = this.add.tileSprite(0, 0, 800, 600, 'background');
-        this.bg.setScale(4);
+        this.bg = this.add.tileSprite(400, 300, 800, 600, 'fightingLevelBackground');
+        this.bg.setScale(1);
 
         this.scoreText = this.add.text(this.sys.canvas.width / 2 - 14, 30, 'FIGHT!', {
             fontFamily: 'Cavalcade-Shadow',
@@ -56,7 +56,7 @@ export class FightScene extends Phaser.Scene {
             key: 'bird'
         });
 
-        this.raccoon = new Raccoon2({
+        this.raccoon = new Raccoon({
             scene: this,
             x: 650,
             y: 100,
@@ -81,7 +81,6 @@ export class FightScene extends Phaser.Scene {
     }
 
     update(): void {
-        this.bg.tilePositionX -= 1;
         this.squirrel.update();
         this.raccoon.update();
     }

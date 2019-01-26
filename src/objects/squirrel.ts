@@ -1,5 +1,5 @@
 import { Projectile } from '../objects/Projectile';
-import { Raccoon2 } from '../objects/Raccoon2';
+import { Raccoon } from '../objects/Raccoon';
 import { GameObjects, Scene } from 'phaser';
 
 export class Squirrel extends Phaser.GameObjects.Sprite {
@@ -13,7 +13,7 @@ export class Squirrel extends Phaser.GameObjects.Sprite {
 	private throwTimer;
 	
 	public acorns: GameObjects.Group;
-	public enemy: Raccoon2;
+	public enemy: Raccoon;
 
     public getDead(): boolean {
         return this.isDead;

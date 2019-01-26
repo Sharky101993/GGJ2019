@@ -13,6 +13,11 @@
       },
       {
         "type": "image",
+        "key": "fightingLevelBackground",
+        "url": "assets/images/fighting_level_bg.png"
+      },
+      {
+        "type": "image",
         "key": "bird",
         "url": "assets/images/bird.png"
       },

@@ -46,7 +46,7 @@ export class Fighter extends Phaser.GameObjects.Sprite {
 	}
 
     update(): void {
-        this.slowDown();
+        //this.slowDown();
         this.handleMove();
 		this.scene.physics.overlap(this.enemy, this.projectiles, this.handleHitEnemy, null, this.scene);
 		this.handleItemsOffScreen();
@@ -83,7 +83,7 @@ export class Fighter extends Phaser.GameObjects.Sprite {
 
     public climb(delta): void {
         this.isClimbing = true;
-        delta = Math.max(300,Math.min(0,(this.y + delta))) - this.y;
+        delta = Math.min(600,Math.max(0,(this.y + delta))) - this.y;
         this.body.setVelocityY(delta);
     }
 	
@@ -95,6 +95,6 @@ export class Fighter extends Phaser.GameObjects.Sprite {
 		});
 		this.projectiles.add(projectile);
 		this.scene.add.existing(projectile);
-		projectile.fire(this, {x: -300, y: -300});
+		projectile.fire(this, {x: -600, y: -150});
 	}
 }
