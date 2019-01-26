@@ -1,9 +1,8 @@
-export class Pipe extends Phaser.GameObjects.Sprite {
+export class Truck extends Phaser.GameObjects.Sprite {
     constructor(params) {
         super(params.scene, params.x, params.y, params.key, params.frame);
 
         // image
-        this.setScale(3);
         this.setOrigin(0, 0);
 
         // physics
@@ -11,7 +10,6 @@ export class Pipe extends Phaser.GameObjects.Sprite {
         this.body.immovable = true;
         this.body.allowGravity = false;
         this.body.setVelocityX(0);
-        this.body.setSize(20, 20);
-        this.body.collideWorldBounds = true;
+        this.body.setSize(40, 70);
     }
 }

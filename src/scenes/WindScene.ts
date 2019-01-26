@@ -1,9 +1,11 @@
 import { Bird } from '../objects/Bird';
 import { Pipe } from '../objects/Pipe';
+import { Truck } from '../objects/Truck';
 
-export class GameScene extends Phaser.Scene {
+export class WindScene extends Phaser.Scene {
     // objects
     private bird: Bird;
+    private truck: Truck;
     private pipes: Phaser.GameObjects.Group;
     private bg: Phaser.GameObjects.TileSprite;
 
@@ -14,7 +16,7 @@ export class GameScene extends Phaser.Scene {
 
     constructor() {
         super({
-            key: 'GameScene'
+            key: 'WindScene'
         });
     }
 
@@ -48,23 +50,26 @@ export class GameScene extends Phaser.Scene {
             y: 100,
             key: 'bird'
         });
+        this.physics.add.collider(this.bird, this.pipes);
+
+        this.truck = new Truck({
+            scene: this,
+            x: 700,
+            y: 0,
+            key: 'truck'
+        });
+        this.physics.add.collider(this.bird, this.truck, this.endWindScene, null, this);
 
         // Add bird
         this.add.existing(this.bird);
-
-        this.timer = this.time.addEvent({
-            delay: 1500,
-            callback: this.addRowOfPipes,
-            callbackScope: this,
-            loop: true
-        });
+        // Add truck
+        this.add.existing(this.truck);
     }
 
     update(): void {
         if (!this.bird.getDead()) {
             this.bg.tilePositionX -= 1;
             this.bird.update();
-            this.physics.overlap(this.bird, this.pipes, this.hitPipe, null, this);
         } else {
             Phaser.Actions.Call(
                 this.pipes.getChildren(),
@@ -78,6 +83,10 @@ export class GameScene extends Phaser.Scene {
                 this.restartGame();
             }
         }
+    }
+
+    private endWindScene(): void {
+        this.scene.start('DrivingLevel', this.scene);
     }
 
     private addOnePipe(x, y, frame): void {
@@ -103,27 +112,23 @@ export class GameScene extends Phaser.Scene {
         this.scoreText.setText('' + this.score);
 
         // randomly pick a number between 1 and 5
-        let hole = Math.floor(Math.random() * 5) + 1;
+        let hole = 3;
 
         // add 6 pipes with one big hole at position hole and hole + 1
         for (let i = 0; i < 10; i++) {
             if (i != hole && i != hole + 1 && i != hole + 2) {
                 if (i == hole - 1) {
-                    this.addOnePipe(800, i * 60, 0);
+                    this.addOnePipe(400, i * 60, 0);
                 } else if (i == hole + 3) {
-                    this.addOnePipe(800, i * 60, 1);
+                    this.addOnePipe(400, i * 60, 1);
                 } else {
-                    this.addOnePipe(800, i * 60, 2);
+                    this.addOnePipe(400, i * 60, 2);
                 }
             }
         }
     }
 
-    private hitPipe() {
-        this.bird.setDead(true);
-    }
-
     private restartGame(): void {
-        this.scene.start('MainMenu');
+        // this.scene.start('MainMenu');
     }
 }
