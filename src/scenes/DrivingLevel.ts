@@ -1,13 +1,9 @@
-/**
- * DrivingL, Tweensevel
- */
-
 const ITEM_TYPE_BOMB = 'bomb';
 const ITEM_TYPE_HAT = 'hat';
 const mphPxScale = 0.65;
 const NUM_HATS = 12;
 
-const HATS_TO_WIN = 1;
+const HATS_TO_WIN = 10;
 
 export class DrivingLevel extends Phaser.Scene {
     private startKey: Phaser.Input.Keyboard.Key;
