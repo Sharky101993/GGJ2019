@@ -19,7 +19,12 @@
       {
         "type": "image",
         "key": "raccoon",
-        "url": "assets/images/squirrel.png"
+        "url": "assets/images/raccoon.png"
+      },
+      {
+        "type": "image",
+        "key": "sandwich",
+        "url": "assets/images/sandwich.png"
       },
       {
         "type": "spritesheet",

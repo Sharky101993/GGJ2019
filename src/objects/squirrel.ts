@@ -1,9 +1,19 @@
+import { Projectile } from '../objects/Projectile';
+import { Raccoon } from '../objects/Racoon';
+import { GameObjects, Scene } from 'phaser';
+
 export class Squirrel extends Phaser.GameObjects.Sprite {
     private climbUpKey: Phaser.Input.Keyboard.Key;
-    private climbDownKey: Phaser.Input.Keyboard.Key;
+	private climbDownKey: Phaser.Input.Keyboard.Key;
+	private throwKey: Phaser.Input.Keyboard.Key;
     private anim: Phaser.Tweens.Tween[];
     private isDead: boolean = false;
-    private isClimbing: boolean = false;
+	private isClimbing: boolean = false;
+	private isThrowing: boolean = false;
+	private throwTimer;
+	
+	public acorns: GameObjects.Group;
+	public enemy: Raccoon;
 
     public getDead(): boolean {
         return this.isDead;
@@ -15,16 +25,15 @@ export class Squirrel extends Phaser.GameObjects.Sprite {
 
     constructor(params) {
         super(params.scene, params.x, params.y, params.key, params.frame);
-
         // image
-        this.setScale(3);
+        this.setScale(1);
         this.setOrigin(0, 0);
 
         // physics
-        params.scene.physics.world.enable(this);
+		params.scene.physics.world.enable(this);
 		this.body.allowGravity = false;
-        this.body.setSize(17, 12);
-
+        this.body.setSize(60, 60);
+		this.body.colideWorldBounds = true;
         // animations & tweens
         this.anim = [
             // params.scene.tweens.add({
@@ -32,7 +41,10 @@ export class Squirrel extends Phaser.GameObjects.Sprite {
             //     duration: 100,
             //     angle: -20
             // })
-        ];
+		];
+
+		this.enemy = params.enemy;
+		this.acorns = this.scene.add.group({classType: Projectile, runChildUpdate: true});
 
         // input
         this.climbUpKey = params.scene.input.keyboard.addKey(
@@ -40,12 +52,27 @@ export class Squirrel extends Phaser.GameObjects.Sprite {
         );
         this.climbDownKey = params.scene.input.keyboard.addKey(
             Phaser.Input.Keyboard.KeyCodes.S
-        );
+		);
+        this.throwKey = params.scene.input.keyboard.addKey(
+            Phaser.Input.Keyboard.KeyCodes.SPACE
+		);
+
+		this.throwTimer = params.scene.time.addEvent({
+            delay: 750,
+            callback: this.handleThrowOver,
+            callbackScope: this,
+            loop: false,
+        });
+    }
+
+    private handleThrowOver(): void {
+        this.throwTimer.reset({ delay: 750, callback: this.handleThrowOver, callbackScope: this, repeat: 1});
+        this.isThrowing = false;
     }
 
     update(): void {
         this.slowDown();
-        this.handleInput();
+		this.handleInput();
     }
 
     private slowDown(): void {
@@ -61,14 +88,30 @@ export class Squirrel extends Phaser.GameObjects.Sprite {
             this.climb(200);
         } else if (this.climbDownKey.isUp && this.climbUpKey.isUp && this.isClimbing) {
             this.isClimbing = false;
-        }
+		}
+		
+		if (this.throwKey.isDown && !this.isThrowing) {
+			this.isThrowing = true;
+			this.throw();
+		}
     }
 
     public climb(delta): void {
         this.isClimbing = true;
         this.body.setVelocityY(delta);
         //this.anim[0].restart();
-    }
+	}
+	
+	public throw(): void{
+		let acorn = new Projectile({
+			scene: this.scene,
+			key: 'sandwich',
+			visible: true
+		});
+		this.scene.add.existing(acorn);
+		acorn.fire(this, {x: 300, y: -300});
+		this.scene.physics.overlap(this.enemy, acorn, () => console.log('hit'), null, this.scene);
+	}
 
     // private isOffTheScreen(): void {
     //     if (this.y + this.height > this.scene.sys.canvas.height) {

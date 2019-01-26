@@ -1,9 +1,12 @@
+import { Projectile } from '../objects/Projectile';
 export class Raccoon extends Phaser.GameObjects.Sprite {
 	private climbUpKey: Phaser.Input.Keyboard.Key;
     private climbDownKey: Phaser.Input.Keyboard.Key;
     private anim: Phaser.Tweens.Tween[];
     private isDead: boolean = false;
     private isClimbing: boolean = false;
+	private isThrowing: boolean = false;
+	private throwTimer;
 
     public getDead(): boolean {
         return this.isDead;
@@ -17,13 +20,13 @@ export class Raccoon extends Phaser.GameObjects.Sprite {
         super(params.scene, params.x, params.y, params.key, params.frame);
 
         // image
-        this.setScale(3);
+        this.setScale(1);
         this.setOrigin(0, 0);
 
         // physics
         params.scene.physics.world.enable(this);
 		this.body.allowGravity = false;
-        this.body.setSize(17, 12);
+        this.body.setSize(80, 70);
 
         // animations & tweens
         this.anim = [
@@ -41,6 +44,17 @@ export class Raccoon extends Phaser.GameObjects.Sprite {
         this.climbDownKey = params.scene.input.keyboard.addKey(
             Phaser.Input.Keyboard.KeyCodes.S
         );
+		this.throwTimer = params.scene.time.addEvent({
+            delay: 750,
+            callback: this.handleThrowOver,
+            callbackScope: this,
+            loop: false,
+        });
+	}
+	
+    private handleThrowOver(): void {
+        this.throwTimer.reset({ delay: Phaser.Math.Between(200,1500), callback: this.handleThrowOver, callbackScope: this, repeat: 1});
+		this.throw();
     }
 
     update(): void {
@@ -64,9 +78,24 @@ export class Raccoon extends Phaser.GameObjects.Sprite {
         }
     }
 
+	public getHit(): void {
+		console.log('hit');
+	}
+
     public climb(delta): void {
         this.isClimbing = true;
         this.body.setVelocityY(delta);
         //this.anim[0].restart();
     }
+	
+	public throw(): void{
+		let acorn = new Projectile({
+			scene: this.scene,
+			key: 'sandwich',
+			visible: true
+		});
+		this.scene.add.existing(acorn);
+		acorn.fire(this, {x: -300, y: -300});
+		this.scene.physics.overlap(this.enemy, acorn, () => console.log('hit'), null, this.scene);
+	}
 }

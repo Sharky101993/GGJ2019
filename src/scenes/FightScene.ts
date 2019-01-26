@@ -2,6 +2,7 @@ import { Bird } from '../objects/Bird';
 import { Pipe } from '../objects/Pipe';
 import { Squirrel } from '../objects/Squirrel';
 import { Raccoon } from '../objects/Racoon';
+import { Projectile } from '../objects/Projectile';
 
 export class FightScene extends Phaser.Scene {
     // objects
@@ -9,6 +10,7 @@ export class FightScene extends Phaser.Scene {
     private squirrel: Squirrel;
     private raccoon: Raccoon;
     private pipes: Phaser.GameObjects.Group;
+    private acorns: Phaser.GameObjects.Group;
     private bg: Phaser.GameObjects.TileSprite;
 
     // variables
@@ -26,6 +28,7 @@ export class FightScene extends Phaser.Scene {
         // objects
         this.bird = null;
         this.pipes = this.add.group({ classType: Pipe });
+		this.acorns = this.add.group({classType: Projectile, runChildUpdate: true});
         this.squirrel = null;
         this.bg = null;
 
@@ -53,32 +56,36 @@ export class FightScene extends Phaser.Scene {
             key: 'bird'
         });
 
-        this.squirrel = new Squirrel({
-            scene: this,
-            x: 50,
-            y: 100,
-            key: 'squirrel'
-        })
-
         this.raccoon = new Raccoon({
             scene: this,
-            x: 600,
+            x: 650,
             y: 100,
             key: 'raccoon'
         })
 
-        // Add bird
-        this.add.existing(this.bird);
+        this.squirrel = new Squirrel({
+            scene: this,
+            x: 50,
+            y: 100,
+            key: 'squirrel',
+            enemy: this.raccoon
+        })
 
         // Add squirrel
         this.add.existing(this.squirrel);
 
+        // Add raccoon
+        this.add.existing(this.raccoon);
     }
 
     update(): void {
         if (!this.squirrel.getDead()) {
             this.bg.tilePositionX -= 1;
             this.squirrel.update();
+        }
+
+        if (!this.raccoon.getDead()) {
+            this.raccoon.update();
         }
     }
 
