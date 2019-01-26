@@ -44,19 +44,18 @@ export class Bird extends Phaser.GameObjects.Sprite {
         if (!this.pointer.isDown && this.dragXStart >= 0) {
             const diffX = this.pointer.x - this.dragXStart;
             const diffY = this.pointer.y - this.dragYStart;
-            if (Math.abs(diffX) > Math.abs(diffY)) {
-                this.body.velocity.x += 300 * diffX / Math.abs(diffX);
-            } else if (Math.abs(diffY) > 0) {
-                this.body.velocity.y += 300 * diffY / Math.abs(diffY);
-            }
+            const diff = Math.sqrt(diffX * diffX + diffY * diffY);
+            const multiplier = diff > 0 ? Math.max(1, 200 / diff) : 1;
+            this.body.velocity.x += diffX * multiplier;
+            this.body.velocity.y += diffY * multiplier;
             this.dragXStart = -1;
             this.dragYStart = -1;
         }
         if (this.body.velocity.x !== 0) {
-            this.body.velocity.x -= 3 * (this.body.velocity.x / Math.abs(this.body.velocity.x));
+            this.body.velocity.x *= 0.99;
         }
         if (this.body.velocity.y !== 0) {
-            this.body.velocity.y -= 3 * (this.body.velocity.y / Math.abs(this.body.velocity.y));
+            this.body.velocity.y *= 0.99;
         }
     }
 
