@@ -1,5 +1,5 @@
 import { Projectile } from '../objects/Projectile';
-import { Raccoon } from '../objects/Racoon';
+import { Raccoon2 } from '../objects/Raccoon2';
 import { GameObjects, Scene } from 'phaser';
 
 export class Squirrel extends Phaser.GameObjects.Sprite {
@@ -13,7 +13,7 @@ export class Squirrel extends Phaser.GameObjects.Sprite {
 	private throwTimer;
 	
 	public acorns: GameObjects.Group;
-	public enemy: Raccoon;
+	public enemy: Raccoon2;
 
     public getDead(): boolean {
         return this.isDead;
@@ -68,11 +68,32 @@ export class Squirrel extends Phaser.GameObjects.Sprite {
     private handleThrowOver(): void {
         this.throwTimer.reset({ delay: 750, callback: this.handleThrowOver, callbackScope: this, repeat: 1});
         this.isThrowing = false;
-    }
+	}
+
+	private handleHitRaccoon(raccoon, trash): void {
+		this.acorns.remove(trash, true, true);
+	}
 
     update(): void {
         this.slowDown();
 		this.handleInput();
+		this.scene.physics.overlap(this.enemy, this.acorns, this.handleHitRaccoon, null, this.scene);
+		this.handleItemsOffScreen();
+	}
+
+    private handleItemsOffScreen(): void {
+        const handler = (group) => {
+            Phaser.Actions.Call(
+                group.getChildren(),
+                function(child: Phaser.GameObjects.Sprite) {
+                    if (child.y >= 700) {
+                        group.remove(child, true, true);
+                    }
+                },
+                this
+            );   
+        }
+        handler(this.acorns);
     }
 
     private slowDown(): void {
@@ -111,7 +132,6 @@ export class Squirrel extends Phaser.GameObjects.Sprite {
 		this.acorns.add(acorn);
 		this.scene.add.existing(acorn);
 		acorn.fire(this, {x: 300, y: -300});
-		this.scene.physics.overlap(this.enemy, this.acorns, () => console.log('hit'), null, this.scene);
 	}
 
     // private isOffTheScreen(): void {

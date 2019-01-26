@@ -9,6 +9,10 @@ export class Raccoon extends Phaser.GameObjects.Sprite {
 	private isThrowing: boolean = false;
 	private throwTimer;
 	
+    private changeDirectionTimer: Phaser.Time.TimerEvent;
+    // if false moving right
+    private isClimbingUp: Boolean;
+
 	public acorns: GameObjects.Group;
 	public enemy: Raccoon;
 
@@ -35,6 +39,9 @@ export class Raccoon extends Phaser.GameObjects.Sprite {
         params.scene.physics.world.enable(this);
 		this.body.allowGravity = false;
         this.body.setSize(80, 70);
+		this.body.colideWorldBounds = true;
+
+        this.isClimbingUp = true;
 
         // animations & tweens
         this.anim = [
@@ -43,7 +50,10 @@ export class Raccoon extends Phaser.GameObjects.Sprite {
             //     duration: 100,
             //     angle: -20
             // })
-        ];
+		];
+		
+		this.enemy = params.enemy;
+		this.acorns = this.scene.add.group({classType: Projectile});
 
         // input
         this.climbUpKey = params.scene.input.keyboard.addKey(
@@ -58,16 +68,48 @@ export class Raccoon extends Phaser.GameObjects.Sprite {
             callbackScope: this,
             loop: false,
         });
-	}
+        this.changeDirectionTimer = params.scene.time.addEvent({
+            delay: 750,
+            callback: this.handleDirectionChange,
+            callbackScope: this,
+            loop: false,
+        });
+    }
+
+    private handleDirectionChange(): void {
+        this.changeDirectionTimer.reset({ delay: Phaser.Math.Between(200,1500), callback: this.handleDirectionChange, callbackScope: this, repeat: 1});
+        this.isClimbingUp = !this.isClimbingUp;
+    }
 	
     private handleThrowOver(): void {
         this.throwTimer.reset({ delay: Phaser.Math.Between(200,1500), callback: this.handleThrowOver, callbackScope: this, repeat: 1});
 		this.throw();
-    }
+	}
+
+	private handleHitSquirrel(squirrel, trash): void {
+		this.acorns.remove(trash, true, true);
+	}
 
     update(): void {
         this.slowDown();
-        this.handleInput();
+        this.handleMove();
+		this.scene.physics.overlap(this.enemy, this.acorns, this.handleHitSquirrel, null, this.scene);
+		this.handleItemsOffScreen();
+	}
+
+    private handleItemsOffScreen(): void {
+        const handler = (group) => {
+            Phaser.Actions.Call(
+                group.getChildren(),
+                function(child: Phaser.GameObjects.Sprite) {
+                    if (child.y >= 700) {
+                        group.remove(child, true, true);
+                    }
+                },
+                this
+            );   
+        }
+        handler(this.acorns);
     }
 
     private slowDown(): void {
@@ -76,7 +118,7 @@ export class Raccoon extends Phaser.GameObjects.Sprite {
         }
     }
 
-    private handleInput(): void {
+    private handleMove(): void {
         if (this.climbUpKey.isDown) {
 			this.climb(-200);
 		} else if (this.climbDownKey.isDown) {
@@ -102,8 +144,8 @@ export class Raccoon extends Phaser.GameObjects.Sprite {
 			key: 'sandwich',
 			visible: true
 		});
+		this.acorns.add(acorn);
 		this.scene.add.existing(acorn);
 		acorn.fire(this, {x: -300, y: -300});
-		this.scene.physics.overlap(this.enemy, this.acorns, () => console.log('hit'), null, this.scene);
 	}
 }
