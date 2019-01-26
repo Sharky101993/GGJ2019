@@ -9,7 +9,7 @@ import { WindScene } from './scenes/WindScene';
 
 // main game configuration
 const config: GameConfig = {
-  title: 'Home is Where the Hat is',
+  title: 'Home is Where your Hat is',
   width: 800,
   height: 600,
   type: Phaser.AUTO,

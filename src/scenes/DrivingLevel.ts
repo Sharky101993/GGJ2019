@@ -8,7 +8,7 @@ const OFFSCREEN_EVENT = 'offscreen-event';
 const mphPxScale = 0.65;
 const NUM_HATS = 12;
 
-const HATS_TO_WIN = 5;
+const HATS_TO_WIN = 10;
 
 export class DrivingLevel extends Phaser.Scene {
     private startKey: Phaser.Input.Keyboard.Key;
@@ -22,14 +22,17 @@ export class DrivingLevel extends Phaser.Scene {
     private bombs: Phaser.GameObjects.Group;
     private hats: Phaser.GameObjects.Group;
     private explosions: Phaser.GameObjects.Group;
+    private explodeSound: Phaser.Sound.BaseSound;
+    private sirenSound: Phaser.Sound.BaseSound;
+    private engineSound: Phaser.Sound.BaseSound;
 
     // variables
     private speed: number;
     private numHatHits: number;
-    private numBombHits: number;
+    private hatPower: number;
 
     private hatCountText: Phaser.GameObjects.Text;
-    private bombCountText: Phaser.GameObjects.Text;
+    private hatPowerText: Phaser.GameObjects.Text;
     private throwingStuffTimer: Phaser.Time.TimerEvent;
 
     constructor() {
@@ -38,14 +41,21 @@ export class DrivingLevel extends Phaser.Scene {
         });
     }
 
-    init() {
+    init(data) {
         this.speed = 35;
         this.numHatHits = 0;
-        this.numBombHits = 0;
         this.bg = null;
         this.bombs = this.add.group({ classType: Bomb });
         this.hats = this.add.group({ classType: Hat });
         this.explosions = this.add.group({ classType: Explosion });
+        this.hatPower = data.hp;
+        this.explodeSound = this.sound.add('level2Explosion');
+        this.sirenSound = this.sound.add('level2Siren', {
+            'loop': true,
+        });
+        this.engineSound = this.sound.add('level2Engine', {
+            'loop': true,
+        });
     }
 
     create() {
@@ -56,19 +66,20 @@ export class DrivingLevel extends Phaser.Scene {
             `Hit: ${this.numHatHits} hats`,
             {
                 'fontFamily': 'Cavalcade-Shadow',
-                fontSize: 36
+                fontSize: 24
             }
         );
-        this.bombCountText = this.add.text(
+        this.hatPowerText = this.add.text(
             10,
-            40,
-            `Hit: ${this.numBombHits} bombs`,
+            50,
+            `Hat Power Left: ${this.hatPower}`,
             {
                 'fontFamily': 'Cavalcade-Shadow',
-                fontSize: 36
+                fontSize: 24
             }
         );
         this.hatCountText.setDepth(10);
+        this.hatPowerText.setDepth(11);
         this.copCar = new CopCar({
             scene: this,
             x: 440,
@@ -89,6 +100,8 @@ export class DrivingLevel extends Phaser.Scene {
             callbackScope: this,
             loop: false
         });
+        this.sirenSound.play();
+        //this.engineSound.play();
     }
 
     update() {
@@ -118,12 +131,12 @@ export class DrivingLevel extends Phaser.Scene {
     }
 
     private throwRandomItem():void {
-        if (Math.random() > 0.7) {
+        if (Math.random() > 0.8) {
             this.throwHat();
         } else {
             this.throwBomb();
         }
-        this.throwingStuffTimer.reset({ delay: Phaser.Math.Between(300,1000), callback: this.throwRandomItem, callbackScope: this, repeat: 1});
+        this.throwingStuffTimer.reset({ delay: Phaser.Math.Between(200,750), callback: this.throwRandomItem, callbackScope: this, repeat: 1});
     }
 
     private throwHat(): void {
@@ -157,9 +170,10 @@ export class DrivingLevel extends Phaser.Scene {
     }
 
     private hitBomb(object1, object2): void {
+        this.explodeSound.play();
        const bomb = this.objectWithType(object1, object2, ITEM_TYPE_BOMB);
-       this.numBombHits++;
-       this.bombCountText.setText(`Hit: ${this.numBombHits} bombs`);
+       this.hatPower--;
+       this.hatPowerText.setText(`Hat Power Left: ${this.hatPower}`);
        this.bombs.remove(bomb, true, true);
        // explosion
        const explosion = new Explosion({
@@ -171,32 +185,92 @@ export class DrivingLevel extends Phaser.Scene {
        this.explosions.add(explosion);
        this.add.existing(explosion);
        this.dropHats();
+       if (this.hatPower === 0) {
+           this.crazyExplosion(() => {
+            this.scene.start('WindScene', this.scene);
+           });
+       }
     }
 
     private dropHats(): void {
-        //TODO
+        for (let i = 0; i < 5; i++) {
+            const hatKey = Math.floor(Math.random()*NUM_HATS);
+               const hat = new Hat({
+                scene: this,
+                  x: this.copCar.x,
+                 y: this.copCar.y,
+                 key: `hat${hatKey}`,
+                 randomVelocity: true,
+            });
+              this.add.existing(hat);
+              this.add.tween({
+                targets: hat,
+                duration: 1500,
+                alpha: 0,
+                onComplete: (e) => {
+                    e.targets.forEach(t => {
+                        t.destroy(this);
+                    });
+                },
+            });
+        }
+        this.numHatHits = 0;
+        this.updateHatCountText();
+    }
+
+    private updateHatCountText(): void {
+        this.hatCountText.setText(`Hit: ${this.numHatHits} hats`);
+    }
+
+    private crazyExplosion(callback):void {
+        for (let i = 0; i < 100; i++) {
+            const randX = Math.floor(Math.random()*800);
+             const randY =  Math.floor(Math.random()*600);
+               const explosion = new Explosion({
+              scene: this,
+               x: randX,
+              y: randY,
+              key: 'hatsplosion',
+              dontFixToCar: true,
+            });
+              this.explosions.add(explosion);
+              this.add.existing(explosion);
+           }
+           this.time.addEvent({
+               delay:1000,
+               callbackScope:this,
+               callback: () => {
+                this.sirenSound.stop();
+                //this.engineSound.stop();
+                callback();
+               },
+           });
     }
 
     private hitHat(object1, object2) {
-        const hat = this.objectWithType(object1, object2, ITEM_TYPE_HAT);
-        this.hats.remove(hat, true, true);
         this.numHatHits++;
-        this.hatCountText.setText(`Hit: ${this.numHatHits} hats`);
+        this.updateHatCountText();
         if (this.numHatHits === HATS_TO_WIN) {
-            // REPLACE WITH WIN
-            for (let i = 0; i < 100; i++) {
-             const randX = Math.floor(Math.random()*800);
-              const randY =  Math.floor(Math.random()*600);
-                const explosion = new Explosion({
-               scene: this,
-                x: randX,
-               y: randY,
-               key: 'hatsplosion',
-               dontFixToCar: true,
-             });
-               this.explosions.add(explosion);
-               this.add.existing(explosion);
-            }
+            const hat = this.objectWithType(object1, object2, ITEM_TYPE_HAT);
+            this.hats.remove(hat, true, true);
+            this.crazyExplosion(() => {
+                this.scene.start('FightScene', this.scene);
+            });
+        } else {
+            const hat = this.objectWithType(object1, object2, ITEM_TYPE_HAT);
+            this.hats.remove(hat, false, false);
+            this.add.tween({
+                targets: hat,
+                duration: 1500,
+                alpha: 0,
+                x: this.copCar.x,
+                y: this.copCar.y,
+                onComplete: (e) => {
+                    e.targets.forEach(t => {
+                        t.destroy(this);
+                    });
+                },
+            });
         }
     }
 
@@ -364,13 +438,16 @@ class Hat extends Phaser.GameObjects.Sprite {
 
     constructor(params) {
         super(params.scene, params.x, params.y, params.key, params.frame);
-
         // image
         this.scene = params.scene;
-        this.angle = 180;
         // physics
         params.scene.physics.world.enable(this);
-
+        if (params.randomVelocity) {
+            const magnitude = 160;
+            const angle = Math.floor(Math.random()*2*Math.PI);
+            this.body.setVelocityX(Math.cos(angle)*magnitude);
+            this.body.setVelocityY(Math.sin(angle)*magnitude);
+        }
         // animations & tweens
         this.anim = [
         ];
@@ -410,10 +487,3 @@ class Explosion extends Phaser.GameObjects.Sprite {
         }
     }
 }
-
-function uuidv4() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
-    });
-  }
