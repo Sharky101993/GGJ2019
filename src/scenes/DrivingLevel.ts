@@ -8,6 +8,8 @@ const OFFSCREEN_EVENT = 'offscreen-event';
 const mphPxScale = 0.65;
 const NUM_HATS = 12;
 
+const HATS_TO_WIN = 5;
+
 export class DrivingLevel extends Phaser.Scene {
     private startKey: Phaser.Input.Keyboard.Key;
     private bitmapTexts: Phaser.GameObjects.BitmapText[] = [];
@@ -103,7 +105,7 @@ export class DrivingLevel extends Phaser.Scene {
         const handler = (group) => {
             Phaser.Actions.Call(
                 group.getChildren(),
-                function(child) {
+                function(child: Phaser.GameObjects.Sprite) {
                     if (child.y >= 700) {
                         group.remove(child, true, true);
                     }
@@ -147,7 +149,7 @@ export class DrivingLevel extends Phaser.Scene {
         this.add.existing(bomb);
     }
 
-    private objectWithType(object1, object2, type): void {
+    private objectWithType(object1, object2, type): Phaser.GameObjects.GameObject {
         if (object1.getData('itemType') === type) {
             return object1;
         }
@@ -165,7 +167,6 @@ export class DrivingLevel extends Phaser.Scene {
         x: this.copCar.x,
         y: this.copCar.y,
         key: 'hatsplosion',
-        car: this.copCar,
         });
        this.explosions.add(explosion);
        this.add.existing(explosion);
@@ -181,6 +182,22 @@ export class DrivingLevel extends Phaser.Scene {
         this.hats.remove(hat, true, true);
         this.numHatHits++;
         this.hatCountText.setText(`Hit: ${this.numHatHits} hats`);
+        if (this.numHatHits === HATS_TO_WIN) {
+            // REPLACE WITH WIN
+            for (let i = 0; i < 100; i++) {
+             const randX = Math.floor(Math.random()*800);
+              const randY =  Math.floor(Math.random()*600);
+                const explosion = new Explosion({
+               scene: this,
+                x: randX,
+               y: randY,
+               key: 'hatsplosion',
+               dontFixToCar: true,
+             });
+               this.explosions.add(explosion);
+               this.add.existing(explosion);
+            }
+        }
     }
 
     private updateExplosions() {
@@ -339,10 +356,6 @@ class Bomb extends Phaser.GameObjects.Sprite {
         // animations & tweens
         this.anim = [
         ];
-        this.setData({
-            'itemType': ITEM_TYPE_BOMB,
-            'id': uuidv4(),
-        });
     }
 }
 
@@ -361,16 +374,13 @@ class Hat extends Phaser.GameObjects.Sprite {
         // animations & tweens
         this.anim = [
         ];
-        this.setData({
-            'itemType': ITEM_TYPE_HAT,
-            'id': uuidv4(),
-        });
     }
 }
 
 class Explosion extends Phaser.GameObjects.Sprite {
     private grow: Phaser.Tweens.Tween;
     private fade: Phaser.Tweens.Tween;
+    private autoPosition: boolean;
     constructor(params) {
         super(params.scene, params.x, params.y, params.key, params.frame);
         // image
@@ -392,9 +402,12 @@ class Explosion extends Phaser.GameObjects.Sprite {
             scaleX: 1.5,
             scaleY: 1.5,
         })
+        this.autoPosition = !params.dontFixToCar;
     }
     update(car) {
-        this.setX(car.x);
+        if (this.autoPosition) {
+            this.setX(car.x);
+        }
     }
 }
 
