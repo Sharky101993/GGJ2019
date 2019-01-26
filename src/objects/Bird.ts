@@ -1,8 +1,10 @@
 export class Bird extends Phaser.GameObjects.Sprite {
-    private jumpKey: Phaser.Input.Keyboard.Key;
     private anim: Phaser.Tweens.Tween[];
     private isDead: boolean = false;
     private isFlapping: boolean = false;
+    private pointer;
+    private dragXStart: number = -1;
+    private dragYStart: number = -1;
 
     public getDead(): boolean {
         return this.isDead;
@@ -21,41 +23,40 @@ export class Bird extends Phaser.GameObjects.Sprite {
 
         // physics
         params.scene.physics.world.enable(this);
-        this.body.setGravityY(1000);
+        this.body.allowGravity = false;
+        this.body.setVelocityY(0);
         this.body.setSize(17, 12);
-
-        // animations & tweens
-        this.anim = [
-            params.scene.tweens.add({
-                targets: this,
-                duration: 100,
-                angle: -20
-            })
-        ];
+        this.body.collideWorldBounds = true;
 
         // input
-        this.jumpKey = params.scene.input.keyboard.addKey(
-            Phaser.Input.Keyboard.KeyCodes.SPACE
-        );
+        this.pointer = params.scene.input.activePointer;
     }
 
     update(): void {
-        this.handleAngleChange();
         this.handleInput();
-        this.isOffTheScreen();
-    }
-
-    private handleAngleChange(): void {
-        if (this.angle < 20) {
-            this.angle += 1;
-        }
     }
 
     private handleInput(): void {
-        if (this.jumpKey.isDown && !this.isFlapping) {
-            this.flap();
-        } else if (this.jumpKey.isUp && this.isFlapping) {
-            this.isFlapping = false;
+        if (this.pointer.isDown && this.dragXStart < 0) {
+            this.dragXStart = this.pointer.x;
+            this.dragYStart = this.pointer.y;
+        }
+        if (!this.pointer.isDown && this.dragXStart >= 0) {
+            const diffX = this.pointer.x - this.dragXStart;
+            const diffY = this.pointer.y - this.dragYStart;
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                this.body.velocity.x += 300 * diffX / Math.abs(diffX);
+            } else if (Math.abs(diffY) > 0) {
+                this.body.velocity.y += 300 * diffY / Math.abs(diffY);
+            }
+            this.dragXStart = -1;
+            this.dragYStart = -1;
+        }
+        if (this.body.velocity.x !== 0) {
+            this.body.velocity.x -= 3 * (this.body.velocity.x / Math.abs(this.body.velocity.x));
+        }
+        if (this.body.velocity.y !== 0) {
+            this.body.velocity.y -= 3 * (this.body.velocity.y / Math.abs(this.body.velocity.y));
         }
     }
 
@@ -63,11 +64,5 @@ export class Bird extends Phaser.GameObjects.Sprite {
         this.isFlapping = true;
         this.body.setVelocityY(-350);
         this.anim[0].restart();
-    }
-
-    private isOffTheScreen(): void {
-        if (this.y + this.height > this.scene.sys.canvas.height) {
-            this.isDead = true;
-        }
     }
 }

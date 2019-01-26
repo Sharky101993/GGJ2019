@@ -2,6 +2,7 @@
  * Main menu.
  */
 export class MainMenu extends Phaser.Scene {
+    private startWindKey: Phaser.Input.Keyboard.Key;
     private startFightKey: Phaser.Input.Keyboard.Key;
     private startDrivingKey: Phaser.Input.Keyboard.Key;
     private bitmapTexts: Phaser.GameObjects.BitmapText[] = [];
@@ -14,6 +15,9 @@ export class MainMenu extends Phaser.Scene {
     }
 
     init() {
+        this.startWindKey = this.input.keyboard.addKey(
+            Phaser.Input.Keyboard.KeyCodes.F
+        );
         this.startFightKey = this.input.keyboard.addKey(
             Phaser.Input.Keyboard.KeyCodes.S
         );
@@ -51,6 +55,9 @@ export class MainMenu extends Phaser.Scene {
         }
         if (this.startDrivingKey.isDown) {
             this.scene.start('DrivingLevel');
+        }
+        if (this.startWindKey.isDown) {
+            this.scene.start('WindScene');
         }
     }
 }

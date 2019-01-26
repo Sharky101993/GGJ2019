@@ -4,8 +4,8 @@ import 'phaser';
 import { Boot } from './scenes/Boot';
 import { MainMenu } from './scenes/MainMenu';
 import { FightScene } from './scenes/FightScene';
-import { GameScene } from './scenes/GameScene';
 import { DrivingLevel } from './scenes/DrivingLevel';
+import { WindScene } from './scenes/WindScene';
 
 // main game configuration
 const config: GameConfig = {
@@ -14,10 +14,10 @@ const config: GameConfig = {
   height: 600,
   type: Phaser.AUTO,
   parent: 'game',
-  scene: [Boot, MainMenu, GameScene, FightScene, DrivingLevel],
+  scene: [Boot, MainMenu, WindScene, FightScene, DrivingLevel],
   input: {
     keyboard: true,
-    mouse: false,
+    mouse: true,
     touch: false,
     gamepad: false
   },
