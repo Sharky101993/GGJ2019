@@ -157,6 +157,11 @@
       },
       {
         "type": "image",
+        "key": "officerSlide",
+        "url": "assets/images/officer_slide.png"
+      },
+      {
+        "type": "image",
         "key": "chappy",
         "url": "assets/images/chappy.png"
       },

@@ -1,0 +1,108 @@
+export type Slide = {
+    bgImageKey: string;
+    spriteKey: string,
+    dialogue: string,
+    bgMusicKey: string | undefined;
+}
+
+export default class CutScene extends Phaser.Scene {
+    // objects
+    private enterKey: Phaser.Input.Keyboard.Key;
+    private dialogue: Phaser.GameObjects.Sprite;
+    private dialogueText: Phaser.GameObjects.Text;
+    private slides: Slide[];
+    private currSlideIdx;
+    private bgSoundByIdx: (Phaser.Sound.BaseSound | null)[]; 
+    private nextSceneKey: string;
+    private dialogueTextTimer: Phaser.Time.TimerEvent;
+    private talkingSprite: Phaser.GameObjects.Sprite;
+
+    constructor(params) {
+        super({
+            key: params.key
+        });
+        this.nextSceneKey = params.nextSceneKey;
+        this.slides = params.slides;
+        this.currSlideIdx = 0;
+        this.bgSoundByIdx = [];
+        params.slides.forEach((s) => {
+            if (s.bgMusicKey) {
+                this.bgSoundByIdx.push(this.sound.add(s.bgMusicKey));
+            } else {
+                this.bgSoundByIdx.push(null);
+            }
+        });
+    }
+
+    init(): void {
+        this.enterKey = this.input.keyboard.addKey(
+            Phaser.Input.Keyboard.KeyCodes.ENTER
+        );
+        this.dialogueText = this.add.text(
+            100,
+            450,
+            ``,
+            {
+                fontSize: 24,
+                wordWrap: {width: 550, useAdvancedWrap: true },
+            },
+        );
+        this.dialogueText.width = 600;
+        this.dialogueText.height = 200;
+        this.dialogueText.setDepth(10);
+        this.dialogueTextTimer = this.time.addEvent({
+            delay: 50,
+            callback: this.addTextLetter,
+            callbackScope: this,
+            loop: true,
+        });
+    }
+
+    private addTextLetter() {
+        const currText = this.dialogueText.text;
+        const fullText = this.slides[this.currSlideIdx].dialogue;
+        if (currText.length === fullText.length) {
+            return;
+        }
+        const nextText = currText + fullText.charAt(currText.length);
+        this.dialogueText.setText(nextText);
+    }
+
+    create(): void {
+        this.dialogue = new Phaser.GameObjects.Sprite(this, 400, 500, 'dialogue');
+        this.add.existing(this.dialogue);
+        this.talkingSprite = new Phaser.GameObjects.Sprite(this, 40, 460, this.slides[0].spriteKey);
+        this.add.existing(this.talkingSprite);
+    }
+
+    nextSlide(): void {
+        this.currSlideIdx++;
+        this.dialogueText.setText('');
+        this.dialogueTextTimer = this.time.addEvent({
+            delay: 50,
+            callback: this.addTextLetter,
+            callbackScope: this,
+            loop: true,
+        });
+        this.talkingSprite.destroy();
+        this.talkingSprite = new Phaser.GameObjects.Sprite(this, 40, 460, this.slides[this.currSlideIdx].spriteKey);
+        this.add.existing(this.talkingSprite);
+    }
+
+    update(): void {
+        if (Phaser.Input.Keyboard.JustDown(this.enterKey)) {
+            const fullTextCurrDialogue = this.slides[this.currSlideIdx].dialogue;
+            const fullTextShowing = this.dialogueText.text.length === fullTextCurrDialogue.length;
+            if (this.currSlideIdx === this.slides.length-1 && fullTextShowing) {
+                this.scene.start(this.nextSceneKey);
+                return;
+            }
+            if (fullTextShowing) {
+                this.nextSlide();
+            } else {
+                this.dialogueTextTimer.destroy();
+                this.dialogueText.setText(fullTextCurrDialogue);
+            }
+        }
+    }
+}

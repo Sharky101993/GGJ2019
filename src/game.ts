@@ -6,7 +6,7 @@ import { MainMenu } from './scenes/MainMenu';
 import { FightScene } from './scenes/FightScene';
 import { DrivingLevel } from './scenes/DrivingLevel';
 import { WindScene } from './scenes/WindScene';
-import { Act1 } from './scenes/Act1';
+import { Act1 } from './scenes/cutscenes/Act1';
 
 // main game configuration
 const config: GameConfig = {
