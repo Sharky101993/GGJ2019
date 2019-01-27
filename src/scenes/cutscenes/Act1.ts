@@ -57,7 +57,7 @@ export class Act1 extends CutScene {
         super({
             key: 'Act1',
             slides: slideData,
-            nextSceneKey: 'WindScene',
+            nextSceneKey: 'Instructions1',
         });
     }
 }

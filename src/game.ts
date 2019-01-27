@@ -12,6 +12,9 @@ import { Act3 } from './scenes/cutscenes/Act3';
 import { Act4 } from './scenes/cutscenes/Act4';
 import { GameEnd } from './scenes/GameEnd';
 import { GameOver } from './scenes/GameOver';
+import { Instructions1 } from './scenes/instructions/Instructions1';
+import { Instructions2 } from './scenes/instructions/Instructions2';
+import { Instructions3 } from './scenes/instructions/Instructions3';
 
 // main game configuration
 const config: GameConfig = {
@@ -20,7 +23,7 @@ const config: GameConfig = {
   height: 600,
   type: Phaser.WEBGL,
   parent: 'game',
-  scene: [Boot, MainMenu, Act1, WindScene, Act2, FightScene, Act3, DrivingLevel, Act4, GameEnd, GameOver],
+  scene: [Boot, MainMenu, Act1, Instructions1, WindScene, Act2, Instructions2, FightScene, Act3, Instructions3, DrivingLevel, Act4, GameEnd, GameOver],
   input: {
     keyboard: true,
     mouse: true,

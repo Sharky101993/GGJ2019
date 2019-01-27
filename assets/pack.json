@@ -43,6 +43,21 @@
       },
       {
         "type": "image",
+        "key": "instructions1",
+        "url": "assets/images/instructions1.png"
+      },
+      {
+        "type": "image",
+        "key": "instructions2",
+        "url": "assets/images/instructions2.png"
+      },
+      {
+        "type": "image",
+        "key": "instructions3",
+        "url": "assets/images/instructions3.png"
+      },
+      {
+        "type": "image",
         "key": "act1BG",
         "url": "assets/images/act1.png"
       },

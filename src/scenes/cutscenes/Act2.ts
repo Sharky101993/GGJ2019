@@ -29,7 +29,7 @@ export class Act2 extends CutScene {
         super({
             key: 'Act2',
             slides: slideData,
-            nextSceneKey: 'DrivingLevel',
+            nextSceneKey: 'Instructions2',
         });
     }
 }
