@@ -127,6 +127,11 @@
         "url": "assets/images/shield.png"
       },
       {
+        "type": "image",
+        "key": "dialogue",
+        "url": "assets/images/dialogue.png"
+      },
+      {
         "type": "spritesheet",
         "key": "pipe",
         "url": "assets/images/pipe.png",
