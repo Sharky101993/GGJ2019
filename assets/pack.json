@@ -132,6 +132,11 @@
         "url": "assets/images/dialogue.png"
       },
       {
+        "type": "image",
+        "key": "wind",
+        "url": "assets/images/wind.png"
+      },
+      {
         "type": "spritesheet",
         "key": "pipe",
         "url": "assets/images/pipe.png",

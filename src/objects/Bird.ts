@@ -2,6 +2,7 @@ export class Bird extends Phaser.GameObjects.Sprite {
     private anim: Phaser.Tweens.Tween[];
     private isDead: boolean = false;
     private isFlapping: boolean = false;
+    private wind: Phaser.GameObjects.Sprite;
     private pointer;
     private dragXStart: number = -1;
     private dragYStart: number = -1;
@@ -28,6 +29,11 @@ export class Bird extends Phaser.GameObjects.Sprite {
         this.body.setSize(17, 12);
         this.body.collideWorldBounds = true;
 
+        this.wind = new Phaser.GameObjects.Sprite(this.scene, 0, 0, 'wind');
+        this.scene.add.existing(this.wind);
+        this.wind.alpha = 0;
+        console.log('hii');
+
         // input
         this.pointer = params.scene.input.activePointer;
     }
@@ -37,11 +43,24 @@ export class Bird extends Phaser.GameObjects.Sprite {
     }
 
     private handleInput(): void {
-        if (this.pointer.isDown && this.dragXStart < 0) {
-            this.dragXStart = this.pointer.x;
-            this.dragYStart = this.pointer.y;
+        if (this.pointer.isDown) {
+            if (this.dragXStart < 0) {
+                this.dragXStart = this.pointer.x;
+                this.dragYStart = this.pointer.y;
+                this.wind.x = this.dragXStart;
+                this.wind.y = this.dragYStart;
+            } else {
+                const diffX = this.pointer.x - this.dragXStart;
+                const diffY = this.pointer.y - this.dragYStart;
+                const diff = Math.sqrt(diffX * diffX + diffY * diffY);
+                this.wind.setAngle(Math.atan(diffY / diffX) * 180 / Math.PI + (diffX < 0 ? 180 : 0));
+                console.log(this.wind.angle);
+                this.wind.alpha = (Math.abs(diffX) > 0 || Math.abs(diffY) > 0) ? 1 : 0;
+                this.wind.alpha = diff / 400 + 0.1;
+            }
         }
         if (!this.pointer.isDown && this.dragXStart >= 0) {
+            this.wind.alpha = 0;
             const diffX = this.pointer.x - this.dragXStart;
             const diffY = this.pointer.y - this.dragYStart;
             const diff = Math.sqrt(diffX * diffX + diffY * diffY);
