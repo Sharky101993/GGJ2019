@@ -3,8 +3,8 @@
     "files": [
       {
         "type": "image",
-        "key": "background",
-        "url": "assets/images/bg.png"
+        "key": "bg_wind",
+        "url": "assets/images/bg_wind.png"
       },
       {
         "type": "image",
@@ -159,11 +159,6 @@
         "type": "image",
         "key": "rock",
         "url": "assets/images/rock.png"
-      },
-      {
-        "type": "image",
-        "key": "truck",
-        "url": "assets/images/truck.png"
       },
       {
         "type": "image",

@@ -36,8 +36,7 @@ export class WindScene extends Phaser.Scene {
     }
 
     create(): void {
-        this.bg = this.add.tileSprite(0, 0, 800, 600, 'background');
-        this.bg.setScale(4);
+        this.bg = this.add.tileSprite(400, 300, 800, 600, 'bg_wind');
 
         this.scoreText = this.add.text(14, 30, '0', {
             fontFamily: 'Cavalcade-Shadow',
@@ -60,7 +59,7 @@ export class WindScene extends Phaser.Scene {
             scene: this,
             x: 730,
             y: 50,
-            key: 'truck'
+            key: 'caperCar'
         });
         this.physics.add.collider(this.bird, this.truck, this.endWindScene, null, this);
 
