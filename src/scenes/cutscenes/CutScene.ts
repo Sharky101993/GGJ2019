@@ -8,6 +8,7 @@ export type Slide = {
 export default class CutScene extends Phaser.Scene {
     // objects
     private enterKey: Phaser.Input.Keyboard.Key;
+    private bg: Phaser.GameObjects.TileSprite;
     private dialogue: Phaser.GameObjects.Sprite;
     private dialogueText: Phaser.GameObjects.Text;
     private slides: Slide[];
@@ -40,11 +41,11 @@ export default class CutScene extends Phaser.Scene {
         );
         this.dialogueText = this.add.text(
             100,
-            450,
+            440,
             ``,
             {
                 fontSize: 24,
-                wordWrap: {width: 550, useAdvancedWrap: true },
+                wordWrap: {width: 600, useAdvancedWrap: true },
             },
         );
         this.dialogueText.width = 600;
@@ -70,13 +71,18 @@ export default class CutScene extends Phaser.Scene {
 
     create(): void {
         this.dialogue = new Phaser.GameObjects.Sprite(this, 400, 500, 'dialogue');
+        this.dialogue.setDepth(9);
         this.add.existing(this.dialogue);
         this.talkingSprite = new Phaser.GameObjects.Sprite(this, 40, 460, this.slides[0].spriteKey);
+        this.talkingSprite.setDepth(11);
         this.add.existing(this.talkingSprite);
+        this.bg = this.add.tileSprite(400, 300, 800, 600, this.slides[0].bgImageKey);
     }
 
     nextSlide(): void {
         this.currSlideIdx++;
+        this.bg.destroy();
+        this.bg = this.add.tileSprite(400, 300, 800, 600, this.slides[this.currSlideIdx].bgImageKey);
         this.dialogueText.setText('');
         this.dialogueTextTimer = this.time.addEvent({
             delay: 50,
@@ -86,6 +92,7 @@ export default class CutScene extends Phaser.Scene {
         });
         this.talkingSprite.destroy();
         this.talkingSprite = new Phaser.GameObjects.Sprite(this, 40, 460, this.slides[this.currSlideIdx].spriteKey);
+        this.talkingSprite.setDepth(11);
         this.add.existing(this.talkingSprite);
     }
 
