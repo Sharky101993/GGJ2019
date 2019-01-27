@@ -3,7 +3,8 @@ export class Pipe extends Phaser.GameObjects.Sprite {
         super(params.scene, params.x, params.y, params.key, params.frame);
 
         // image
-        this.setScale(3);
+        this.setScale(0.5);
+        this.setSize(67, 50)
         this.setOrigin(0, 0);
 
         // physics
@@ -11,7 +12,6 @@ export class Pipe extends Phaser.GameObjects.Sprite {
         this.body.immovable = true;
         this.body.allowGravity = false;
         this.body.setVelocityX(0);
-        this.body.setSize(20, 20);
         this.body.collideWorldBounds = true;
     }
 }

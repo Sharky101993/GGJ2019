@@ -25,10 +25,10 @@ const config: GameConfig = {
     default: 'arcade',
     arcade: {
       gravity: { y: 300 },
-      debug: true
+      debug: false
     }
   },
-  backgroundColor: '#98d687',
+  backgroundColor: '#228B22',
   render: { pixelArt: true, antialias: false, autoResize: false }
 };
 

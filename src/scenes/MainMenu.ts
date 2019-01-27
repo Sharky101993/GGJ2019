@@ -29,21 +29,12 @@ export class MainMenu extends Phaser.Scene {
     create() {
         this.texts.push(
             this.add.text(
-                this.sys.canvas.width / 2 - 135,
+                this.sys.canvas.width / 2 - 300,
                 this.sys.canvas.height / 2 - 80,
-                'FLOPPY BIRD',
+                'WHERE YOUR HAT IS',
                 {
                     'fontFamily': 'Cavalcade-Shadow',
-                    fontSize: 40
-                }
-            ),
-            this.add.text(
-                100,
-                this.sys.canvas.height / 2 - 10,
-                'S: PLAY FIGHT\nD: PLAY DRIVING\nF: PLAY WIND',
-                {
-                    fontFamily: 'Cavalcade-Shadow',
-                    fontSize: 30
+                    fontSize: 60,
                 }
             )
         );

@@ -1,10 +1,5 @@
-/**
- * DrivingLevel
- */
-
 const ITEM_TYPE_BOMB = 'bomb';
 const ITEM_TYPE_HAT = 'hat';
-const OFFSCREEN_EVENT = 'offscreen-event';
 const mphPxScale = 0.65;
 const NUM_HATS = 12;
 
@@ -35,6 +30,8 @@ export class DrivingLevel extends Phaser.Scene {
     private hatPowerText: Phaser.GameObjects.Text;
     private throwingStuffTimer: Phaser.Time.TimerEvent;
 
+    private playerWon: boolean;
+
     constructor() {
         super({
             key: 'DrivingLevel'
@@ -56,6 +53,7 @@ export class DrivingLevel extends Phaser.Scene {
         this.engineSound = this.sound.add('level2Engine', {
             'loop': true,
         });
+        this.playerWon = false;
     }
 
     create() {
@@ -106,10 +104,12 @@ export class DrivingLevel extends Phaser.Scene {
 
     update() {
        this.bg.tilePositionY -= ((this.speed-10)*mphPxScale);
-       this.copCar.update();
        this.hatterCar.update();
-       this.physics.overlap(this.copCar, this.bombs, this.hitBomb, null, this);
-       this.physics.overlap(this.copCar, this.hats, this.hitHat, null, this);
+       if (!this.playerWon) {
+            this.copCar.update();
+            this.physics.overlap(this.copCar, this.bombs, this.hitBomb, null, this);
+            this.physics.overlap(this.copCar, this.hats, this.hitHat, null, this);
+       }
        this.handleItemsOffScreen();
        this.updateExplosions();
     }
@@ -166,7 +166,7 @@ export class DrivingLevel extends Phaser.Scene {
         if (object1.getData('itemType') === type) {
             return object1;
         }
-        return object2
+        return object2;
     }
 
     private hitBomb(object1, object2): void {
@@ -223,6 +223,8 @@ export class DrivingLevel extends Phaser.Scene {
     }
 
     private crazyExplosion(callback):void {
+        this.explodeSound.play();
+        this.sirenSound.stop();
         for (let i = 0; i < 100; i++) {
             const randX = Math.floor(Math.random()*800);
              const randY =  Math.floor(Math.random()*600);
@@ -253,9 +255,18 @@ export class DrivingLevel extends Phaser.Scene {
         if (this.numHatHits === HATS_TO_WIN) {
             const hat = this.objectWithType(object1, object2, ITEM_TYPE_HAT);
             this.hats.remove(hat, true, true);
-            this.crazyExplosion(() => {
-                this.scene.start('FightScene', this.scene);
-            });
+            this.playerWon = true;
+            this.throwingStuffTimer.destroy();
+            this.hatterCar.spiralOutOfControl();
+            this.copCar.stopMoving();
+            this.add.tween({
+                targets: this.sirenSound,
+                volume: 0,
+                duration: 6000,
+                onComplete: () => {
+                    this.sirenSound.destroy();
+                },
+            })
         } else {
             const hat = this.objectWithType(object1, object2, ITEM_TYPE_HAT);
             this.hats.remove(hat, false, false);
@@ -316,6 +327,9 @@ class CopCar extends Phaser.GameObjects.Sprite {
     }
 
     update(): void {
+        if (this.isDead) {
+            return;
+        }
         this.handleInput();
     }
 
@@ -349,13 +363,24 @@ class CopCar extends Phaser.GameObjects.Sprite {
         }
         this.setAngleAndVelocity(15, 400);
     }
+    stopMoving(): void {
+        this.body.setVelocityX(0);
+        this.setAngle(0);
+        this.isDead = true;
+    }
 }
 
 class HatterCar extends Phaser.GameObjects.Sprite {
     private anim: Phaser.Tweens.Tween[];
     private changeDirectionTimer: Phaser.Time.TimerEvent;
     // if false moving right
-    private movingLeft: Boolean;
+    private movingLeft: boolean;
+
+    private isSpiralingOutOfControl: boolean;
+    private finalHatShot: boolean;
+
+    private deathExplosionEmit: Phaser.Time.TimerEvent;
+    private explodeSound: Phaser.Sound.BaseSound;
 
     constructor(params) {
         super(params.scene, params.x, params.y, params.key, params.frame);
@@ -365,9 +390,6 @@ class HatterCar extends Phaser.GameObjects.Sprite {
         // physics
         params.scene.physics.world.enable(this);
         this.body.setSize(100, 300);
-        // animations & tweens
-        this.anim = [
-        ];
         this.body.allowGravity = false; 
         this.movingLeft = true;
         this.changeDirectionTimer = params.scene.time.addEvent({
@@ -375,6 +397,11 @@ class HatterCar extends Phaser.GameObjects.Sprite {
             callback: this.handleDirectionChange,
             callbackScope: this,
             loop: false,
+        });
+        this.isSpiralingOutOfControl = false;
+        this.finalHatShot = false;
+        this.explodeSound = this.scene.sound.add('level2Explosion', {
+            'loop': true,
         });
     }
 
@@ -384,11 +411,20 @@ class HatterCar extends Phaser.GameObjects.Sprite {
     }
 
     update(): void {
+        if (this.isSpiralingOutOfControl) {
+            this.setAngle(this.angle + 10);
+            if (this.x >= 750 || this.x <= 50) {
+                this.deathExplosionEmit.destroy();
+                this.shootFinalHat();
+            }
+            return;
+        }
         if (this.movingLeft) {
             this.moveLeft();
         } else {
             this.moveRight();
         }
+        
     }
 
     private setAngleAndVelocity(angle, velocity): void {
@@ -412,6 +448,76 @@ class HatterCar extends Phaser.GameObjects.Sprite {
         this.setAngleAndVelocity(15, 280);
     }
 
+
+    spiralOutOfControl():void {
+        this.changeDirectionTimer.destroy();
+        this.explodeSound.play();
+        this.isSpiralingOutOfControl = true;
+        this.body.setVelocityY(100);
+        if (this.x >= 300) {
+            this.body.setVelocityX(100);
+        } else {
+            this.body.setVelocityX(-100);
+        }
+        this.deathExplosionEmit = this.scene.time.addEvent({
+            delay: 125,
+            callback: () => {
+                const magnitude = 160;
+                const angle = Math.floor(Math.random()*2*Math.PI);
+                const explosion = new Explosion({
+                    scene: this.scene,
+                    x: this.x,
+                    y: this.y,
+                    velocityX: Math.cos(angle)*magnitude,
+                    velocityY: Math.sin(angle)*magnitude,
+                    key: 'hatsplosion',
+                    dontFixToCar: true,
+                  });
+                this.scene.add.existing(explosion);
+            },
+            callbackScope: this,
+            loop: true,
+        });
+    }
+
+    private shootFinalHat(): void {
+        if (this.finalHatShot) { return };
+        this.finalHatShot = true;
+        const hat = new Phaser.GameObjects.Sprite(
+            this.scene,
+            this.x,
+            this.y,
+            'hat1',
+          );
+        this.scene.physics.world.enable(hat);
+        hat.body.allowGravity = false;
+        this.scene.add.existing(hat);
+        this.scene.add.tween({
+            targets: hat,
+            duration: 2000,
+            scaleX: 3,
+            scaleY: 3,
+            x: 400,
+            y: 300,
+            onComplete: () => {
+                
+                this.scene.add.tween({
+                    targets: hat,
+                    duration: 2000,
+                    scaleX: 60,
+                    scaleY: 60,
+                });
+            },
+        });
+        this.scene.add.tween({
+            targets: this.explodeSound,
+            volume: 0,
+            duration: 3000,
+            onComplete: () => {
+                this.explodeSound.destroy();
+            },
+        })
+    }
 }
 
 class Bomb extends Phaser.GameObjects.Sprite {
@@ -426,7 +532,8 @@ class Bomb extends Phaser.GameObjects.Sprite {
         // physics
         params.scene.physics.world.enable(this);
         this.body.setSize(25, 40);
-
+        this.body.allowGravity = false;
+        this.body.setVelocityY(400);
         // animations & tweens
         this.anim = [
         ];
@@ -480,6 +587,11 @@ class Explosion extends Phaser.GameObjects.Sprite {
             scaleY: 1.5,
         })
         this.autoPosition = !params.dontFixToCar;
+        if (params.velocityX && params.velocityY) {
+            params.scene.physics.world.enable(this);
+            this.body.setVelocityX(params.velocityX);
+            this.body.setVelocityY(params.velocityY);
+        }
     }
     update(car) {
         if (this.autoPosition) {

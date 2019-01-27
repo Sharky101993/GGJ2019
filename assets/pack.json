@@ -137,6 +137,11 @@
       },
       {
         "type": "image",
+        "key": "rock",
+        "url": "assets/images/rock.png"
+      },
+      {
+        "type": "image",
         "key": "truck",
         "url": "assets/images/truck.png"
       },
