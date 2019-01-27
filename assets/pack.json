@@ -162,6 +162,16 @@
       },
       {
         "type": "audio",
+        "key": "level1WindGust",
+        "url": "assets/audio/level_1/wind_gust.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "level1ImpactRock",
+        "url": "assets/audio/level_1/impact_rock.mp3"
+      },
+      {
+        "type": "audio",
         "key": "level2Explosion",
         "url": "assets/audio/level_2/explosion.mp3"
       },
@@ -174,6 +184,26 @@
         "type": "audio",
         "key": "level2Engine",
         "url": "assets/audio/level_2/engine_loop.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "level2ThrowBomb",
+        "url": "assets/audio/level_2/throw_dynamite.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "level2ThrowHat",
+        "url": "assets/audio/level_2/throw_hat.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "level2TireSkid",
+        "url": "assets/audio/level_2/tires_skidding.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "level2CollectHat",
+        "url": "assets/audio/level_2/collect_hat.mp3"
       }
     ]
   }

@@ -1,3 +1,4 @@
+
 const ITEM_TYPE_BOMB = 'bomb';
 const ITEM_TYPE_HAT = 'hat';
 const mphPxScale = 0.65;
@@ -20,6 +21,9 @@ export class DrivingLevel extends Phaser.Scene {
     private explodeSound: Phaser.Sound.BaseSound;
     private sirenSound: Phaser.Sound.BaseSound;
     private engineSound: Phaser.Sound.BaseSound;
+    private coinSound: Phaser.Sound.BaseSound;
+    private throwHatSound: Phaser.Sound.BaseSound;
+    private throwBombSound: Phaser.Sound.BaseSound;
 
     // variables
     private speed: number;
@@ -53,6 +57,9 @@ export class DrivingLevel extends Phaser.Scene {
         this.engineSound = this.sound.add('level2Engine', {
             'loop': true,
         });
+        this.coinSound = this.sound.add('level2CollectHat');
+        this.throwHatSound = this.sound.add('level2ThrowHat');
+        this.throwBombSound = this.sound.add('level2ThrowBomb');
         this.playerWon = false;
     }
 
@@ -140,6 +147,7 @@ export class DrivingLevel extends Phaser.Scene {
     }
 
     private throwHat(): void {
+        this.throwHatSound.play();
         const hatKey = Math.floor(Math.random()*NUM_HATS);
         let hat = new Hat({
             scene: this,
@@ -152,6 +160,7 @@ export class DrivingLevel extends Phaser.Scene {
     }
 
     private throwBomb(): void {
+        this.throwBombSound.play();
         let bomb = new Bomb({
             scene: this,
             x: this.hatterCar.x,
@@ -250,6 +259,7 @@ export class DrivingLevel extends Phaser.Scene {
     }
 
     private hitHat(object1, object2) {
+        this.coinSound.play();
         this.numHatHits++;
         this.updateHatCountText();
         if (this.numHatHits === HATS_TO_WIN) {
@@ -383,6 +393,7 @@ class HatterCar extends Phaser.GameObjects.Sprite {
 
     private deathExplosionEmit: Phaser.Time.TimerEvent;
     private explodeSound: Phaser.Sound.BaseSound;
+    private tireSkidSound: Phaser.Sound.BaseSound;
 
     constructor(params) {
         super(params.scene, params.x, params.y, params.key, params.frame);
@@ -407,6 +418,7 @@ class HatterCar extends Phaser.GameObjects.Sprite {
         this.explodeSound = this.scene.sound.add('level2Explosion', {
             'loop': true,
         });
+        this.tireSkidSound = this.scene.sound.add('level2TireSkid');
     }
 
     private handleDirectionChange(): void {
@@ -458,7 +470,8 @@ class HatterCar extends Phaser.GameObjects.Sprite {
 
     spiralOutOfControl():void {
         this.changeDirectionTimer.destroy();
-        this.explodeSound.play();
+        //this.explodeSound.play();
+        this.tireSkidSound.play();
         this.isSpiralingOutOfControl = true;
         this.body.setVelocityY(100);
         if (this.x >= 300) {
@@ -480,10 +493,10 @@ class HatterCar extends Phaser.GameObjects.Sprite {
                     key: 'hatsplosion',
                     dontFixToCar: true,
                   });
-                this.scene.add.existing(explosion);
+                //this.scene.add.existing(explosion);
             },
             callbackScope: this,
-            loop: true,
+            loop: false,
         });
     }
 

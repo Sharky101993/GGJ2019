@@ -6,6 +6,7 @@ export class Bird extends Phaser.GameObjects.Sprite {
     private pointer;
     private dragXStart: number = -1;
     private dragYStart: number = -1;
+    private windSound: Phaser.Sound.BaseSound;
 
     public getDead(): boolean {
         return this.isDead;
@@ -21,6 +22,9 @@ export class Bird extends Phaser.GameObjects.Sprite {
         // image
         this.setScale(3);
         this.setOrigin(0, 0);
+
+        // audio
+        this.windSound = params.scene.sound.add('level1WindGust');
 
         // physics
         params.scene.physics.world.enable(this);
@@ -69,6 +73,7 @@ export class Bird extends Phaser.GameObjects.Sprite {
             this.body.velocity.y += diffY * multiplier;
             this.dragXStart = -1;
             this.dragYStart = -1;
+            this.windSound.play();
         }
         if (this.body.velocity.x !== 0) {
             this.body.velocity.x *= 0.99;
