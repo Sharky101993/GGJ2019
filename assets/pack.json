@@ -14,12 +14,17 @@
       {
         "type": "image",
         "key": "fightingLevelBackground",
-        "url": "assets/images/fighting_level_bg.png"
+        "url": "assets/images/fighting_level_bg2.png"
       },
       {
         "type": "image",
-        "key": "bird",
-        "url": "assets/images/bird.png"
+        "key": "trash",
+        "url": "assets/images/trash.png"
+      },
+      {
+        "type": "image",
+        "key": "acorn",
+        "url": "assets/images/acorn.png"
       },
       {
         "type": "image",
@@ -115,6 +120,11 @@
         "type": "image",
         "key": "sandwich",
         "url": "assets/images/sandwich.png"
+      },
+      {
+        "type": "image",
+        "key": "shield",
+        "url": "assets/images/shield.png"
       },
       {
         "type": "spritesheet",

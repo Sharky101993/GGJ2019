@@ -43,18 +43,18 @@ export class Squirrel extends Fighter {
     protected handleThrowOver(): void {
         this.throwTimer.reset({ delay: 750, callback: this.handleThrowOver, callbackScope: this, repeat: 1});
         this.isThrowing = false;
+        this.nextAmmo = 'acorn';
 	}
 
     update(): void {
-        this.slowDown();
         super.update();
 	}
 
     protected handleMove(): void {
         if (this.climbUpKey.isDown) {
-			this.climb(-200);
+            this.climb(-300);
 		} else if (this.climbDownKey.isDown) {
-            this.climb(200);
+            this.climb(300);
         } else if (this.climbDownKey.isUp && this.climbUpKey.isUp && this.isClimbing) {
             this.isClimbing = false;
 		}

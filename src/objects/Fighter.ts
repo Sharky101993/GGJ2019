@@ -2,8 +2,10 @@ import { Projectile } from '../objects/Projectile';
 import { GameObjects } from 'phaser';
 export class Fighter extends Phaser.GameObjects.Sprite {
     protected isClimbing: boolean = false;
-	protected isThrowing: boolean = false;
-	protected throwTimer;
+	protected isThrowing: boolean = true;
+    protected throwTimer;
+    protected nextAmmo: string = 'sandwich';
+    protected climbAnim: Phaser.Tweens.Tween;
 
     public projectiles: GameObjects.Group;
     public isFacingRight: boolean = false;
@@ -18,7 +20,7 @@ export class Fighter extends Phaser.GameObjects.Sprite {
 
         // image
         this.setScale(1);
-        this.setOrigin(0, 0);
+        this.setOrigin(0.5, 0.5);
 
         // physics
         params.scene.physics.world.enable(this);
@@ -47,7 +49,7 @@ export class Fighter extends Phaser.GameObjects.Sprite {
 	}
 
     update(): void {
-        //this.slowDown();
+        this.slowDown();
         this.handleMove();
 		this.scene.physics.overlap(this.enemy, this.projectiles, this.handleHitEnemy, null, this);
 		this.handleItemsOffScreen();
@@ -80,20 +82,37 @@ export class Fighter extends Phaser.GameObjects.Sprite {
 		console.log('hit');
 	}
 
-    public climb(delta): void {
+    private wiggle(angle): void {
+        this.climbAnim = this.scene.add.tween({
+            targets: this,
+            duration: 100,
+            onComplete: () => {
+                if (this.isClimbing) {
+                    this.wiggle(-1*angle);
+                }
+            },
+            angle: angle
+        })
+    }
+
+    public climb(velocity): void {
+        if (!this.isClimbing) {
+            this.wiggle(20);
+        }
         this.isClimbing = true;
-        delta = Math.min(600,Math.max(0,(this.y + delta))) - this.y;
-        this.body.setVelocityY(delta);
+        if (velocity > 0 &&  this.y <= 500 || velocity < 0 && this.y >= 50) {
+            this.body.setVelocityY(velocity);
+        }
     }
 	
 	public throw(): void{
 		let projectile = new Projectile({
 			scene: this.scene,
-			key: 'sandwich',
+			key: this.nextAmmo,
 			visible: true
 		});
 		this.projectiles.add(projectile);
 		this.scene.add.existing(projectile);
-		projectile.fire(this, {x: this.isFacingRight ? 300 : -600 , y: -150});
+		projectile.fire(this, {x: this.isFacingRight ? 600 : -600 , y: -150});
 	}
 }

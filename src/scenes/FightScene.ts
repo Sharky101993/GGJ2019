@@ -40,6 +40,7 @@ export class FightScene extends Phaser.Scene {
     create(): void {
         this.bg = this.add.tileSprite(400, 300, 800, 600, 'fightingLevelBackground');
         this.bg.setScale(1);
+        //this.bg.tilePositionX += 50;
 
         this.scoreText = this.add.text(this.sys.canvas.width / 2 - 300, 30, 'TAKE OUT THAT \'COON GOON!', {
             fontFamily: 'Cavalcade-Shadow',
@@ -48,24 +49,16 @@ export class FightScene extends Phaser.Scene {
 
         this.scoreText.setDepth(2);
 
-
-        this.bird = new Bird({
-            scene: this,
-            x: 50,
-            y: 100,
-            key: 'bird'
-        });
-
         this.raccoon = new Raccoon({
             scene: this,
-            x: 650,
+            x: 670,
             y: 100,
             key: 'raccoon'
         })
 
         this.squirrel = new Squirrel({
             scene: this,
-            x: 50,
+            x: 70,
             y: 100,
             key: 'squirrel',
             enemy: this.raccoon
