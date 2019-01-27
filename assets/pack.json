@@ -151,6 +151,11 @@
         "url": "assets/images/truck.png"
       },
       {
+        "type": "image",
+        "key": "chappy",
+        "url": "assets/images/chappy.png"
+      },
+      {
         "type": "audio",
         "key": "level2Explosion",
         "url": "assets/audio/level_2/explosion.mp3"
