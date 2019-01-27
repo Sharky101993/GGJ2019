@@ -7,9 +7,12 @@ const NUM_HATS = 12;
 const HATS_TO_WIN = 5;
 
 export class DrivingLevel extends Phaser.Scene {
-    private startKey: Phaser.Input.Keyboard.Key;
-    private bitmapTexts: Phaser.GameObjects.BitmapText[] = [];
-    private texts: Phaser.GameObjects.Text[] = [];
+    private hpBar: Phaser.GameObjects.Sprite;
+    private health: Phaser.GameObjects.Sprite;
+    private hpBarBg: Phaser.GameObjects.Sprite;
+    private progressBar: Phaser.GameObjects.Sprite;
+    private progress: Phaser.GameObjects.Sprite;
+    private progressBarBg: Phaser.GameObjects.Sprite;
   
     // objects
     private copCar: CopCar;
@@ -31,8 +34,6 @@ export class DrivingLevel extends Phaser.Scene {
     private numHatHits: number;
     private hatPower: number;
 
-    private hatCountText: Phaser.GameObjects.Text;
-    private hatPowerText: Phaser.GameObjects.Text;
     private throwingStuffTimer: Phaser.Time.TimerEvent;
 
     private playerWon: boolean;
@@ -62,33 +63,13 @@ export class DrivingLevel extends Phaser.Scene {
         this.coinSound = this.sound.add('level2CollectHat');
         this.throwHatSound = this.sound.add('level2ThrowHat');
         this.throwBombSound = this.sound.add('level2ThrowBomb');
-        this.music = this.sound.add('level2Music');
+        this.music = this.sound.add('level2Music', {volume: 0.5});
         this.playerWon = false;
     }
 
     create() {
         this.bg = this.add.tileSprite(400, 300, 800, 600, 'drivingLevelBackground');
         this.music.play();
-        this.hatCountText = this.add.text(
-            10,
-            10,
-            `Hit: ${this.numHatHits} hats`,
-            {
-                'fontFamily': 'Cavalcade-Shadow',
-                fontSize: 24
-            }
-        );
-        this.hatPowerText = this.add.text(
-            10,
-            50,
-            `Hat Power Left: ${this.hatPower}`,
-            {
-                'fontFamily': 'Cavalcade-Shadow',
-                fontSize: 24
-            }
-        );
-        this.hatCountText.setDepth(10);
-        this.hatPowerText.setDepth(11);
         this.copCar = new CopCar({
             scene: this,
             x: 440,
@@ -112,18 +93,48 @@ export class DrivingLevel extends Phaser.Scene {
         });
         this.sirenSound.play();
         //this.engineSound.play();
+        
+        this.hpBarBg = new Phaser.GameObjects.Sprite(this, 51, 17, 'bar_bg');
+        this.add.existing(this.hpBarBg);
+        this.health = new Phaser.GameObjects.Sprite(this, 51, 17, 'health');
+        this.add.existing(this.health);
+        this.hpBarBg.displayWidth = 160;
+        this.health.displayHeight = this.hpBarBg.displayHeight = 37;
+        this.hpBarBg.setOrigin (0, 0);
+        this.health.setOrigin (0, 0);
+        this.hpBar = new Phaser.GameObjects.Sprite(this, 110, 40, 'hp');
+        this.hpBar.displayWidth = 202;
+        this.hpBar.displayHeight = 46;
+        this.add.existing(this.hpBar);
+        this.health.displayWidth = this.hpBarBg.displayWidth * this.hatPower / 5;
+        
+        this.progressBarBg = new Phaser.GameObjects.Sprite(this, 50, 81, 'bar_bg');
+        this.add.existing(this.progressBarBg);
+        this.progress = new Phaser.GameObjects.Sprite(this, 50, 81, 'progress');
+        this.add.existing(this.progress);
+        this.progressBarBg.displayWidth = 160;
+        this.progress.displayHeight = this.progressBarBg.displayHeight = 37;
+        this.progressBarBg.setOrigin (0, 0);
+        this.progress.setOrigin (0, 0);
+        this.progressBar = new Phaser.GameObjects.Sprite(this, 110, 100, 'hat_progress');
+        this.progressBar.displayWidth = 202;
+        this.progressBar.displayHeight = 37;
+        this.add.existing(this.progressBar);
+        this.progress.displayWidth = this.progressBarBg.displayWidth * this.numHatHits / 5;
     }
 
     update() {
-       this.bg.tilePositionY -= ((this.speed-10)*mphPxScale);
-       this.hatterCar.update();
-       if (!this.playerWon) {
+        this.bg.tilePositionY -= ((this.speed-10)*mphPxScale);
+        this.hatterCar.update();
+        if (!this.playerWon) {
             this.copCar.update();
             this.physics.overlap(this.copCar, this.bombs, this.hitBomb, null, this);
             this.physics.overlap(this.copCar, this.hats, this.hitHat, null, this);
-       }
-       this.handleItemsOffScreen();
-       this.updateExplosions();
+        }
+        this.handleItemsOffScreen();
+        this.updateExplosions();
+        this.health.displayWidth = this.hpBarBg.displayWidth * this.hatPower / 5;
+        this.progress.displayWidth = this.progressBarBg.displayWidth * this.numHatHits / 5;
     }
 
     private handleItemsOffScreen(): void {
@@ -188,7 +199,6 @@ export class DrivingLevel extends Phaser.Scene {
        const bomb = this.objectWithType(object1, object2, ITEM_TYPE_BOMB);
        this.hatPower--;
        this.hatterCar.hp--;
-       this.hatPowerText.setText(`Hat Power Left: ${this.hatPower}`);
        this.bombs.remove(bomb, true, true);
        // explosion
        const explosion = new Explosion({
@@ -231,11 +241,6 @@ export class DrivingLevel extends Phaser.Scene {
             });
         }
         this.numHatHits = 0;
-        this.updateHatCountText();
-    }
-
-    private updateHatCountText(): void {
-        this.hatCountText.setText(`Hit: ${this.numHatHits} hats`);
     }
 
     private crazyExplosion(callback):void {
@@ -255,7 +260,7 @@ export class DrivingLevel extends Phaser.Scene {
               this.add.existing(explosion);
            }
            this.time.addEvent({
-               delay:1000,
+               delay:500,
                callbackScope:this,
                callback: () => {
                 this.sirenSound.stop();
@@ -268,7 +273,6 @@ export class DrivingLevel extends Phaser.Scene {
     private hitHat(object1, object2) {
         this.coinSound.play();
         this.numHatHits++;
-        this.updateHatCountText();
         if (this.numHatHits === HATS_TO_WIN) {
             const hat = this.objectWithType(object1, object2, ITEM_TYPE_HAT);
             this.hats.remove(hat, true, true);
@@ -279,7 +283,7 @@ export class DrivingLevel extends Phaser.Scene {
             this.add.tween({
                 targets: this.sirenSound,
                 volume: 0,
-                duration: 2000,
+                duration: 500,
                 onComplete: () => {
                     this.sirenSound.destroy();
                 },

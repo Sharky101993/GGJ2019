@@ -10,7 +10,6 @@ export class Raccoon extends Fighter {
     // if false moving right
     private isClimbingUp: Boolean;
     private shield: Phaser.GameObjects.Sprite;
-    private stateText: Phaser.GameObjects.Text;
     private trashCanHit: Phaser.Sound.BaseSound;
     private raccoonCry: Phaser.Sound.BaseSound;
     private raccoonHit: Phaser.Sound.BaseSound;
@@ -44,13 +43,8 @@ export class Raccoon extends Fighter {
         // add pipe to scene
         this.scene.add.existing(this.shield);
 
-        this.hp = 3;
+        this.hp = 5;
 
-        this.stateText = this.scene.add.text(this.x, 30, this.hp.toString(), {
-            fontFamily: 'Cavalcade-Shadow',
-            fontSize: 30
-        });
-        this.stateText.setDepth(2);
         this.shootAngle = -135;
         
         this.trashCanHit = this.scene.sound.add('level3TrashCanHit');
@@ -59,7 +53,7 @@ export class Raccoon extends Fighter {
     }
 
     protected handleShieldOver(): void {
-        this.throwTimer.reset({ delay: 2000, callback: this.handleThrowOver, callbackScope: this, repeat: 1});
+        this.throwTimer.reset({ delay: 500, callback: this.handleThrowOver, callbackScope: this, repeat: 1});
         this.nextAmmo = Phaser.Math.Between(0,1) % 2 ? 'sandwich' : 'trash';
         this.throw();
         this.shield.x = this.x + 30;
@@ -68,7 +62,7 @@ export class Raccoon extends Fighter {
     }
     
     protected handleThrowOver(): void {
-        this.throwTimer.reset({ delay: 2000, callback: this.handleShieldOver, callbackScope: this, repeat: 1});
+        this.throwTimer.reset({ delay: 1000, callback: this.handleShieldOver, callbackScope: this, repeat: 1});
         this.shield.x = this.x - 20;
         this.shield.setAngle(-45);
         this.state = RaccoonState.Shield;
@@ -82,21 +76,12 @@ export class Raccoon extends Fighter {
     update(): void {
         super.update();
         this.shield.y = this.y - 10;
-
-        this.stateText.setText('' + this.shootAngle + ' ' + String(this.hp));
         
 	}
 
     protected handleMove(): void {
-        this.climb(0);
-        
-        if (this.isClimbingUp && this.shootAngle > -180) {
-            this.magnitude = 500;
-            this.shootAngle -= 1;
-		} else if (!this.isClimbingUp && this.shootAngle < -110) {
-            this.magnitude = 600;
-            this.shootAngle += 2;
-        }
+        this.magnitude = Phaser.Math.Between(600, 700);
+        this.shootAngle = Phaser.Math.Between(170, 225);
     }
 
 	public getHit(): void {
@@ -105,11 +90,24 @@ export class Raccoon extends Fighter {
             this.raccoonHit.play();
             this.hp--;
             if (this.hp <= 0) {
-                this.scene.scene.start('Act4');
+                // this.scene.scene.start('Act4');
+                this.endGameWithScene('Act4');
             }
         } else {
             this.trashCanHit.play();
         }
+    }
+
+    private endGameWithScene(scene): void {
+        this.scene.add.tween({
+            targets: this.music,
+            volume: 0,
+            duration: 300,
+            onComplete: () => {
+                this.music.destroy();
+                this.scene.scene.start(scene);
+            },
+        })
     }
 }
 class Shield extends Phaser.GameObjects.Sprite {

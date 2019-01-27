@@ -26,9 +26,15 @@ export default class CutScene extends Phaser.Scene {
         });
         this.nextSceneKey = params.nextSceneKey;
         this.slides = params.slides;
-        this.currSlideIdx = 0;
+    }
+
+    init(data): void {
+        this.data = data;
+        this.enterKey = this.input.keyboard.addKey(
+            Phaser.Input.Keyboard.KeyCodes.ENTER
+        );
         this.bgSoundByIdx = [];
-        params.slides.forEach((s) => {
+        this.slides.forEach((s) => {
             if (s.bgMusicKey) {
                 this.bgSoundByIdx.push(this.sound.add(s.bgMusicKey));
             } else {
@@ -37,11 +43,18 @@ export default class CutScene extends Phaser.Scene {
         });
     }
 
-    init(data): void {
-        this.data = data;
-        this.enterKey = this.input.keyboard.addKey(
-            Phaser.Input.Keyboard.KeyCodes.ENTER
-        );
+    private addTextLetter() {
+        const currText = this.dialogueText.text;
+        const fullText = this.slides[this.currSlideIdx].dialogue;
+        if (currText.length === fullText.length) {
+            return;
+        }
+        const nextText = currText + fullText.charAt(currText.length);
+        this.dialogueText.setText(nextText);
+    }
+
+    create(): void {
+        this.currSlideIdx = 0;
         this.characterText = this.add.text(
             80,
             420,
@@ -70,19 +83,7 @@ export default class CutScene extends Phaser.Scene {
             callbackScope: this,
             loop: true,
         });
-    }
-
-    private addTextLetter() {
-        const currText = this.dialogueText.text;
-        const fullText = this.slides[this.currSlideIdx].dialogue;
-        if (currText.length === fullText.length) {
-            return;
-        }
-        const nextText = currText + fullText.charAt(currText.length);
-        this.dialogueText.setText(nextText);
-    }
-
-    create(): void {
+        this.bgSoundByIdx[0].play();
         this.dialogue = new Phaser.GameObjects.Sprite(this, 400, 500, 'dialogue');
         this.dialogue.setDepth(9);
         this.add.existing(this.dialogue);
@@ -104,6 +105,7 @@ export default class CutScene extends Phaser.Scene {
             callbackScope: this,
             loop: true,
         });
+        this.bgSoundByIdx[this.currSlideIdx].play();
         this.talkingSprite.destroy();
         this.talkingSprite = new Phaser.GameObjects.Sprite(this, 40, 460, this.slides[this.currSlideIdx].spriteKey);
         this.talkingSprite.setDepth(11);
@@ -114,6 +116,9 @@ export default class CutScene extends Phaser.Scene {
         if (Phaser.Input.Keyboard.JustDown(this.enterKey)) {
             const fullTextCurrDialogue = this.slides[this.currSlideIdx].dialogue;
             const fullTextShowing = this.dialogueText.text.length === fullTextCurrDialogue.length;
+            if (fullTextShowing) {
+                this.bgSoundByIdx[this.currSlideIdx].destroy();
+            }
             if (this.currSlideIdx === this.slides.length-1 && fullTextShowing) {
                 this.scene.start(this.nextSceneKey, this.data);
                 return;

@@ -8,11 +8,12 @@ export class WindScene extends Phaser.Scene {
     private truck: Truck;
     private pipes: Phaser.GameObjects.Group;
     private bg: Phaser.GameObjects.TileSprite;
+    private hpBar: Phaser.GameObjects.Sprite;
+    private health: Phaser.GameObjects.Sprite;
+    private barBg: Phaser.GameObjects.Sprite;
 
     // variables
     private timer: Phaser.Time.TimerEvent;
-    private score: number;
-    private scoreText: Phaser.GameObjects.Text;
     private hp: number;
     private impactSound: Phaser.Sound.BaseSound;
     private music: Phaser.Sound.BaseSound;
@@ -31,22 +32,14 @@ export class WindScene extends Phaser.Scene {
 
         // variables
         this.timer = undefined;
-        this.score = -1;
         this.hp = 5;
         this.impactSound = this.sound.add('level1ImpactRock');
-        this.music = this.sound.add('level1Music');
+        this.music = this.sound.add('level1Music', {volume: 0.5});
     }
 
     create(): void {
         this.bg = this.add.tileSprite(400, 300, 800, 600, 'bg_wind');
         this.music.play();
-
-        this.scoreText = this.add.text(14, 30, '0', {
-            fontFamily: 'Cavalcade-Shadow',
-            fontSize: 40
-        });
-
-        this.scoreText.setDepth(2);
 
         this.addRocks();
 
@@ -70,16 +63,30 @@ export class WindScene extends Phaser.Scene {
         this.add.existing(this.bird);
         // Add truck
         this.add.existing(this.truck);
+
+        this.barBg = new Phaser.GameObjects.Sprite(this, 51, 17, 'bar_bg');
+        this.add.existing(this.barBg);
+        this.health = new Phaser.GameObjects.Sprite(this, 51, 17, 'health');
+        this.add.existing(this.health);
+        this.barBg.displayWidth = 160;
+        this.health.displayHeight = this.barBg.displayHeight = 37;
+        this.barBg.setOrigin (0, 0);
+        this.health.setOrigin (0, 0);
+        this.hpBar = new Phaser.GameObjects.Sprite(this, 110, 40, 'hp');
+        this.hpBar.displayWidth = 202;
+        this.hpBar.displayHeight = 46;
+        this.add.existing(this.hpBar);
+        this.health.displayWidth = this.barBg.displayWidth * this.hp / 5;
     }
 
     update(): void {
         this.bird.update();
+        this.health.displayWidth = this.barBg.displayWidth * this.hp / 5;
     }
 
     private hitObstacle(): void {
         this.impactSound.play();
         this.hp--;
-        this.scoreText.setText('' + this.hp);
         if (this.hp <= 0) {
             this.restartGame();
         }
@@ -90,10 +97,7 @@ export class WindScene extends Phaser.Scene {
     }
 
     private addRocks(): void {
-        // update the score
-        this.score += 1;
-        this.scoreText.setText('' + this.hp);
-        const rockPositions = [[29, 262], [193, 104], [456, 195], [577, 270], [185, 576], [241, 516], [286, 464], [321, 362], [394, 430], [486, 464], [614, 497], [115, 222], [615, 122], [615, 192], [615, 192], [750, 450]];
+        const rockPositions = [[29, 262], [193, 134], [456, 195], [577, 270], [185, 576], [241, 516], [286, 464], [321, 362], [394, 430], [486, 464], [614, 497], [115, 222], [615, 122], [615, 192], [615, 192], [750, 450]];
         rockPositions.forEach(coords => {
             let pipe = new Pipe({
             scene: this,

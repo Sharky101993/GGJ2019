@@ -56,7 +56,7 @@ export class Squirrel extends Fighter {
         this.scene.add.existing(this.pointer);
         this.pointer.setScale(.25, .25);
         this.pointer.setOrigin(0,0.5);
-        
+
         this.acornThrow = this.scene.sound.add('level3AcornThrow');
         this.squirrelCry = this.scene.sound.add('level3SquirrelCry');
         this.squirrelHit = this.scene.sound.add('level3SquirrelHit');
@@ -84,9 +84,9 @@ export class Squirrel extends Fighter {
         }
 
         if (this.angleLeftKey.isDown && this.shootAngle > -90) {
-            this.shootAngle -= 10;
+            this.shootAngle -= 3;
 		} else if (this.angleRightKey.isDown && this.shootAngle < 90) {
-            this.shootAngle += 10;
+            this.shootAngle += 3;
         }
         this.pointer.angle = this.shootAngle;
 
@@ -102,7 +102,20 @@ export class Squirrel extends Fighter {
         this.squirrelHit.play();
         this.squirrelCry.play();
         if (this.hp <= 0) {
-            this.scene.scene.start('MainMenu');
+            // this.scene.scene.start('MainMenu');
+            this.endGameWithScene('MainMenu');
         }
 	}
+
+    private endGameWithScene(scene): void {
+        this.scene.add.tween({
+            targets: this.music,
+            volume: 0,
+            duration: 300,
+            onComplete: () => {
+                this.music.destroy();
+                this.scene.scene.start(scene);
+            },
+        })
+    }
 }

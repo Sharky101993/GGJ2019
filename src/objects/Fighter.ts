@@ -8,7 +8,8 @@ export class Fighter extends Phaser.GameObjects.Sprite {
     protected shootAngle: number = 0;
     protected magnitude: number = 500;
     protected climbAnim: Phaser.Tweens.Tween;
-    protected hp: number;
+    public hp: number;
+    protected music: Phaser.Sound.BaseSound;
 
     public projectiles: GameObjects.Group;
     public isFacingRight: boolean = false;
@@ -32,6 +33,7 @@ export class Fighter extends Phaser.GameObjects.Sprite {
 		this.body.colideWorldBounds = true;
 
         this.hp = params.scene.hp;
+        this.music = params.scene.music;
 		
 		this.enemy = params.enemy;
 		this.projectiles = this.scene.add.group({classType: Projectile});
@@ -92,7 +94,7 @@ export class Fighter extends Phaser.GameObjects.Sprite {
             targets: this,
             duration: 100,
             onComplete: () => {
-                if (this.isClimbing) {
+                if (this.isClimbing && (this.body.velocity.y !== 0 || angle < 0)) {
                     this.wiggle(-1*angle);
                 }
             },
@@ -105,7 +107,7 @@ export class Fighter extends Phaser.GameObjects.Sprite {
             this.wiggle(20);
         }
         this.isClimbing = true;
-        if (velocity > 0 &&  this.y <= 500 || velocity < 0 && this.y >= 50) {
+        if (velocity > 0 &&  this.y <= 550 || velocity < 0 && this.y >= 250) {
             this.body.setVelocityY(velocity);
         }
     }

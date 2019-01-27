@@ -18,6 +18,31 @@
       },
       {
         "type": "image",
+        "key": "act1BG",
+        "url": "assets/images/act1.png"
+      },
+      {
+        "type": "image",
+        "key": "act2BG",
+        "url": "assets/images/act2.png"
+      },
+      {
+        "type": "image",
+        "key": "act3BG",
+        "url": "assets/images/act3.png"
+      },
+      {
+        "type": "image",
+        "key": "act3BG2",
+        "url": "assets/images/act3b.png"
+      },
+      {
+        "type": "image",
+        "key": "act4BG",
+        "url": "assets/images/act4.png"
+      },
+      {
+        "type": "image",
         "key": "trash",
         "url": "assets/images/trash.png"
       },
@@ -202,6 +227,36 @@
       },
       {
         "type": "image",
+        "key": "health",
+        "url": "assets/images/health.png"
+      },
+      {
+        "type": "image",
+        "key": "progress",
+        "url": "assets/images/progress.png"
+      },
+      {
+        "type": "image",
+        "key": "bar_bg",
+        "url": "assets/images/bar_background.png"
+      },
+      {
+        "type": "image",
+        "key": "hp",
+        "url": "assets/images/hp.png"
+      },
+      {
+        "type": "image",
+        "key": "raccoon_health",
+        "url": "assets/images/raccoon_health.png"
+      },
+      {
+        "type": "image",
+        "key": "hat_progress",
+        "url": "assets/images/hat_progress.png"
+      },
+      {
+        "type": "image",
         "key": "chappy_wind",
         "url": "assets/images/chappy_wind.png"
       },
@@ -289,6 +344,111 @@
         "type": "audio",
         "key": "level2Music",
         "url": "assets/audio/level_2/music.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "level3Music",
+        "url": "assets/audio/level_3/music.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "boy1",
+        "url": "assets/audio/dialogue/Boy/1n.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "boy2",
+        "url": "assets/audio/dialogue/Boy/2.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "father1",
+        "url": "assets/audio/dialogue/Father/1.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "father2",
+        "url": "assets/audio/dialogue/Father/2.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "father3",
+        "url": "assets/audio/dialogue/Father/3.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "gc1",
+        "url": "assets/audio/dialogue/GenghisCoon/1.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "gc2",
+        "url": "assets/audio/dialogue/GenghisCoon/2.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "hattley1",
+        "url": "assets/audio/dialogue/Hattley/1.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "hattley2",
+        "url": "assets/audio/dialogue/Hattley/2.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "hattley3",
+        "url": "assets/audio/dialogue/Hattley/3.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "hatter1",
+        "url": "assets/audio/dialogue/MadHatter/1.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "narrator1",
+        "url": "assets/audio/dialogue/Narrator/1.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "narrator2",
+        "url": "assets/audio/dialogue/Narrator/2.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "narrator3",
+        "url": "assets/audio/dialogue/Narrator/3.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "officer1",
+        "url": "assets/audio/dialogue/OfficerBeanieJones/1.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "officer2",
+        "url": "assets/audio/dialogue/OfficerBeanieJones/2.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "sq1",
+        "url": "assets/audio/dialogue/SirQuerrell/1n.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "sq2",
+        "url": "assets/audio/dialogue/SirQuerrell/2.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "sq3",
+        "url": "assets/audio/dialogue/SirQuerrell/3.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "sq4",
+        "url": "assets/audio/dialogue/SirQuerrell/4.mp3"
       }
     ]
   }
