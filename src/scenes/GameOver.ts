@@ -7,6 +7,7 @@ export class GameOver extends Phaser.Scene {
     private readyToFinish: boolean;
     private deadHattley: Phaser.GameObjects.Sprite;
     private music: Phaser.Sound.BaseSound;
+    private enterButton: Phaser.GameObjects.Sprite;
 
     constructor() {
         super({
@@ -41,9 +42,23 @@ export class GameOver extends Phaser.Scene {
             )
         );
         this.time.delayedCall(300, this.endAnimation, null, this);
+        this.enterButton = new Phaser.GameObjects.Sprite(this, 750, 550, 'enter', 0);
+        this.add.existing(this.enterButton);
+        this.anims.create({
+            key: 'enterAnim',
+            frames: [ { key: 'enter', frame: 0 }, { key: 'enter', frame: 1 } ],
+            frameRate: 2,
+            repeat: -1
+        });
     }
 
     update() {
+        if (this.readyToFinish) {
+            this.enterButton.alpha = 1;
+            this.enterButton.anims.play('enterAnim', true);
+        } else {
+            this.enterButton.alpha = 0;
+        }
         if (Phaser.Input.Keyboard.JustDown(this.startKey) && this.readyToFinish) {
             this.add.tween({
                 targets: this.music,

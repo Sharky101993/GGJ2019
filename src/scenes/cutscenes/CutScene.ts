@@ -19,6 +19,7 @@ export default class CutScene extends Phaser.Scene {
     private nextSceneKey: string;
     private dialogueTextTimer: Phaser.Time.TimerEvent;
     private talkingSprite: Phaser.GameObjects.Sprite;
+    private enterButton: Phaser.GameObjects.Sprite;
 
     constructor(params) {
         super({
@@ -91,6 +92,16 @@ export default class CutScene extends Phaser.Scene {
         this.talkingSprite.setDepth(11);
         this.add.existing(this.talkingSprite);
         this.bg = this.add.tileSprite(400, 300, 800, 600, this.slides[0].bgImageKey);
+
+        this.enterButton = new Phaser.GameObjects.Sprite(this, 670, 550, 'enter', 0);
+        this.enterButton.setDepth(100);
+        this.add.existing(this.enterButton);
+        this.anims.create({
+            key: 'enterAnim',
+            frames: [ { key: 'enter', frame: 0 }, { key: 'enter', frame: 1 } ],
+            frameRate: 2,
+            repeat: -1
+        });
     }
 
     nextSlide(): void {
@@ -113,6 +124,7 @@ export default class CutScene extends Phaser.Scene {
     }
 
     update(): void {
+        this.enterButton.anims.play('enterAnim', true);
         if (Phaser.Input.Keyboard.JustDown(this.enterKey)) {
             const fullTextCurrDialogue = this.slides[this.currSlideIdx].dialogue;
             const fullTextShowing = this.dialogueText.text.length === fullTextCurrDialogue.length;

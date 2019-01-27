@@ -9,6 +9,7 @@ export class MainMenu extends Phaser.Scene {
     private bg: Phaser.GameObjects.TileSprite;
     private titleText: Phaser.GameObjects.Sprite;
     private music: Phaser.Sound.BaseSound;
+    private enterButton: Phaser.GameObjects.Sprite;
 
     constructor() {
         super({
@@ -37,9 +38,18 @@ export class MainMenu extends Phaser.Scene {
         this.bg = this.add.tileSprite(400, 300, 800, 600, 'titleBg');
         this.titleText = new Phaser.GameObjects.Sprite(this, this.sys.canvas.width / 2, this.sys.canvas.height / 2 + 150, 'title');
         this.add.existing(this.titleText);
+        this.enterButton = new Phaser.GameObjects.Sprite(this, 750, 550, 'enter', 0);
+        this.add.existing(this.enterButton);
+        this.anims.create({
+            key: 'enterAnim',
+            frames: [ { key: 'enter', frame: 0 }, { key: 'enter', frame: 1 } ],
+            frameRate: 2,
+            repeat: -1
+        });
     }
 
     update() {
+        this.enterButton.anims.play('enterAnim', true);
         if (this.startFightKey.isDown) {
             this.transitionToScene('FightScene', {hp: 5});
         }

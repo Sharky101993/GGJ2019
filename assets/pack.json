@@ -82,6 +82,15 @@
         "url": "assets/images/act4.png"
       },
       {
+        "type": "spritesheet",
+        "key": "enter",
+        "url": "assets/images/enter.png",
+        "frameConfig": {
+          "frameWidth": 87,
+          "frameHeight": 48
+        }
+      },
+      {
         "type": "image",
         "key": "trash",
         "url": "assets/images/trash.png"
@@ -504,6 +513,11 @@
         "type": "audio",
         "key": "titleTheme",
         "url": "assets/audio/top_level/title_theme.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "instructionsTheme",
+        "url": "assets/audio/top_level/instructions_theme.mp3"
       }
     ]
   }
