@@ -5,6 +5,7 @@ export class MainMenu extends Phaser.Scene {
     private startWindKey: Phaser.Input.Keyboard.Key;
     private startFightKey: Phaser.Input.Keyboard.Key;
     private startDrivingKey: Phaser.Input.Keyboard.Key;
+    private startKey: Phaser.Input.Keyboard.Key;
     private bitmapTexts: Phaser.GameObjects.BitmapText[] = [];
     private texts: Phaser.GameObjects.Text[] = [];
 
@@ -24,6 +25,9 @@ export class MainMenu extends Phaser.Scene {
         this.startDrivingKey = this.input.keyboard.addKey(
             Phaser.Input.Keyboard.KeyCodes.D
         );
+        this.startKey = this.input.keyboard.addKey(
+            Phaser.Input.Keyboard.KeyCodes.ENTER
+        );
     }
 
     create() {
@@ -40,6 +44,10 @@ export class MainMenu extends Phaser.Scene {
         );
     }
 
+    startGame() {
+        this.scene.start('WindScene');
+    }
+
     update() {
         if (this.startFightKey.isDown) {
             this.scene.start('FightScene');
@@ -49,6 +57,9 @@ export class MainMenu extends Phaser.Scene {
         }
         if (this.startWindKey.isDown) {
             this.scene.start('WindScene');
+        }
+        if (this.startKey.isDown) {
+            this.scene.start('Act1');
         }
     }
 }

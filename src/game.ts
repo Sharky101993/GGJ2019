@@ -6,6 +6,7 @@ import { MainMenu } from './scenes/MainMenu';
 import { FightScene } from './scenes/FightScene';
 import { DrivingLevel } from './scenes/DrivingLevel';
 import { WindScene } from './scenes/WindScene';
+import { Act1 } from './scenes/cutscenes/Act1';
 
 // main game configuration
 const config: GameConfig = {
@@ -14,7 +15,7 @@ const config: GameConfig = {
   height: 600,
   type: Phaser.AUTO,
   parent: 'game',
-  scene: [Boot, MainMenu, WindScene, FightScene, DrivingLevel],
+  scene: [Boot, MainMenu, Act1, WindScene, FightScene, DrivingLevel],
   input: {
     keyboard: true,
     mouse: true,
@@ -25,7 +26,7 @@ const config: GameConfig = {
     default: 'arcade',
     arcade: {
       gravity: { y: 300 },
-      debug: false
+      debug: true,
     }
   },
   backgroundColor: '#228B22',

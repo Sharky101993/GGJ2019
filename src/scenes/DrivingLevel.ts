@@ -1,9 +1,10 @@
+
 const ITEM_TYPE_BOMB = 'bomb';
 const ITEM_TYPE_HAT = 'hat';
 const mphPxScale = 0.65;
 const NUM_HATS = 12;
 
-const HATS_TO_WIN = 10;
+const HATS_TO_WIN = 5;
 
 export class DrivingLevel extends Phaser.Scene {
     private startKey: Phaser.Input.Keyboard.Key;
@@ -20,6 +21,9 @@ export class DrivingLevel extends Phaser.Scene {
     private explodeSound: Phaser.Sound.BaseSound;
     private sirenSound: Phaser.Sound.BaseSound;
     private engineSound: Phaser.Sound.BaseSound;
+    private coinSound: Phaser.Sound.BaseSound;
+    private throwHatSound: Phaser.Sound.BaseSound;
+    private throwBombSound: Phaser.Sound.BaseSound;
 
     // variables
     private speed: number;
@@ -53,6 +57,9 @@ export class DrivingLevel extends Phaser.Scene {
         this.engineSound = this.sound.add('level2Engine', {
             'loop': true,
         });
+        this.coinSound = this.sound.add('level2CollectHat');
+        this.throwHatSound = this.sound.add('level2ThrowHat');
+        this.throwBombSound = this.sound.add('level2ThrowBomb');
         this.playerWon = false;
     }
 
@@ -140,6 +147,7 @@ export class DrivingLevel extends Phaser.Scene {
     }
 
     private throwHat(): void {
+        this.throwHatSound.play();
         const hatKey = Math.floor(Math.random()*NUM_HATS);
         let hat = new Hat({
             scene: this,
@@ -152,6 +160,7 @@ export class DrivingLevel extends Phaser.Scene {
     }
 
     private throwBomb(): void {
+        this.throwBombSound.play();
         let bomb = new Bomb({
             scene: this,
             x: this.hatterCar.x,
@@ -250,6 +259,7 @@ export class DrivingLevel extends Phaser.Scene {
     }
 
     private hitHat(object1, object2) {
+        this.coinSound.play();
         this.numHatHits++;
         this.updateHatCountText();
         if (this.numHatHits === HATS_TO_WIN) {
@@ -378,9 +388,12 @@ class HatterCar extends Phaser.GameObjects.Sprite {
 
     private isSpiralingOutOfControl: boolean;
     private finalHatShot: boolean;
+    private finalHat: Phaser.GameObjects.Sprite;
+    private spinFinalHat: boolean;
 
     private deathExplosionEmit: Phaser.Time.TimerEvent;
     private explodeSound: Phaser.Sound.BaseSound;
+    private tireSkidSound: Phaser.Sound.BaseSound;
 
     constructor(params) {
         super(params.scene, params.x, params.y, params.key, params.frame);
@@ -400,9 +413,12 @@ class HatterCar extends Phaser.GameObjects.Sprite {
         });
         this.isSpiralingOutOfControl = false;
         this.finalHatShot = false;
+        this.spinFinalHat = false;
+        this.finalHat = null;
         this.explodeSound = this.scene.sound.add('level2Explosion', {
             'loop': true,
         });
+        this.tireSkidSound = this.scene.sound.add('level2TireSkid');
     }
 
     private handleDirectionChange(): void {
@@ -416,6 +432,9 @@ class HatterCar extends Phaser.GameObjects.Sprite {
             if (this.x >= 750 || this.x <= 50) {
                 this.deathExplosionEmit.destroy();
                 this.shootFinalHat();
+            }
+            if (this.spinFinalHat && this.finalHat) {
+                this.finalHat.setAngle(this.finalHat.angle + 10);
             }
             return;
         }
@@ -451,7 +470,8 @@ class HatterCar extends Phaser.GameObjects.Sprite {
 
     spiralOutOfControl():void {
         this.changeDirectionTimer.destroy();
-        this.explodeSound.play();
+        //this.explodeSound.play();
+        this.tireSkidSound.play();
         this.isSpiralingOutOfControl = true;
         this.body.setVelocityY(100);
         if (this.x >= 300) {
@@ -473,40 +493,44 @@ class HatterCar extends Phaser.GameObjects.Sprite {
                     key: 'hatsplosion',
                     dontFixToCar: true,
                   });
-                this.scene.add.existing(explosion);
+                //this.scene.add.existing(explosion);
             },
             callbackScope: this,
-            loop: true,
+            loop: false,
         });
     }
 
     private shootFinalHat(): void {
         if (this.finalHatShot) { return };
         this.finalHatShot = true;
-        const hat = new Phaser.GameObjects.Sprite(
+        this.finalHat = new Phaser.GameObjects.Sprite(
             this.scene,
             this.x,
             this.y,
-            'hat1',
+            'chappy',
           );
-        this.scene.physics.world.enable(hat);
-        hat.body.allowGravity = false;
-        this.scene.add.existing(hat);
+        this.scene.physics.world.enable(this.finalHat);
+        this.finalHat.body.allowGravity = false;
+        this.scene.add.existing(this.finalHat);
         this.scene.add.tween({
-            targets: hat,
+            targets: this.finalHat,
             duration: 2000,
             scaleX: 3,
             scaleY: 3,
             x: 400,
             y: 300,
             onComplete: () => {
-                
                 this.scene.add.tween({
-                    targets: hat,
+                    targets: this.finalHat,
                     duration: 2000,
                     scaleX: 60,
                     scaleY: 60,
+                    onComplete: () => {
+                        this.spinFinalHat = false;
+                        this.scene.scene.start('FightScene', this.scene.scene);
+                    }
                 });
+                this.spinFinalHat = true;
             },
         });
         this.scene.add.tween({

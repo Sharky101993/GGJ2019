@@ -137,6 +137,16 @@
         "url": "assets/images/pointer.png"
       },
       {
+        "type": "image",
+        "key": "dialogue",
+        "url": "assets/images/dialogue.png"
+      },
+      {
+        "type": "image",
+        "key": "wind",
+        "url": "assets/images/wind.png"
+      },
+      {
         "type": "spritesheet",
         "key": "pipe",
         "url": "assets/images/pipe.png",
@@ -156,6 +166,31 @@
         "url": "assets/images/truck.png"
       },
       {
+        "type": "image",
+        "key": "officerSlide",
+        "url": "assets/images/officer_slide.png"
+      },
+      {
+        "type": "image",
+        "key": "chappy",
+        "url": "assets/images/chappy.png"
+      },
+      {
+        "type": "image",
+        "key": "chappy_wind",
+        "url": "assets/images/chappy_wind.png"
+      },
+      {
+        "type": "audio",
+        "key": "level1WindGust",
+        "url": "assets/audio/level_1/wind_gust.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "level1ImpactRock",
+        "url": "assets/audio/level_1/impact_rock.mp3"
+      },
+      {
         "type": "audio",
         "key": "level2Explosion",
         "url": "assets/audio/level_2/explosion.mp3"
@@ -169,6 +204,26 @@
         "type": "audio",
         "key": "level2Engine",
         "url": "assets/audio/level_2/engine_loop.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "level2ThrowBomb",
+        "url": "assets/audio/level_2/throw_dynamite.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "level2ThrowHat",
+        "url": "assets/audio/level_2/throw_hat.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "level2TireSkid",
+        "url": "assets/audio/level_2/tires_skidding.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "level2CollectHat",
+        "url": "assets/audio/level_2/collect_hat.mp3"
       }
     ]
   }
