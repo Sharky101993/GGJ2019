@@ -4,12 +4,13 @@ export class Truck extends Phaser.GameObjects.Sprite {
 
         // image
         this.setOrigin(0, 0);
+        this.setScale(0.4);
 
         // physics
         params.scene.physics.world.enable(this);
         this.body.immovable = true;
         this.body.allowGravity = false;
         this.body.setVelocityX(0);
-        this.body.setSize(40, 70);
+        this.body.setSize(133, 312);
     }
 }
