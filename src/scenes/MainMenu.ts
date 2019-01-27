@@ -6,8 +6,7 @@ export class MainMenu extends Phaser.Scene {
     private startFightKey: Phaser.Input.Keyboard.Key;
     private startDrivingKey: Phaser.Input.Keyboard.Key;
     private startKey: Phaser.Input.Keyboard.Key;
-    private bitmapTexts: Phaser.GameObjects.BitmapText[] = [];
-    private texts: Phaser.GameObjects.Text[] = [];
+    private texts: Phaser.GameObjects.Text[];
 
     constructor() {
         super({
@@ -31,32 +30,29 @@ export class MainMenu extends Phaser.Scene {
     }
 
     create() {
+        this.texts = [];
         this.texts.push(
             this.add.text(
                 this.sys.canvas.width / 2 - 300,
                 this.sys.canvas.height / 2 - 80,
                 'WHERE YOUR HAT IS',
                 {
-                    'fontFamily': 'Cavalcade-Shadow',
+                    fontFamily: 'Cavalcade-Shadow',
                     fontSize: 60,
                 }
             )
         );
     }
 
-    startGame() {
-        this.scene.start('WindScene');
-    }
-
     update() {
         if (this.startFightKey.isDown) {
-            this.scene.start('FightScene');
+            this.scene.start('FightScene', {hp: 5});
         }
         if (this.startDrivingKey.isDown) {
             this.scene.start('DrivingLevel', {hp: 5});
         }
         if (this.startWindKey.isDown) {
-            this.scene.start('WindScene');
+            this.scene.start('WindScene', {hp: 5});
         }
         if (this.startKey.isDown) {
             this.scene.start('Act1');

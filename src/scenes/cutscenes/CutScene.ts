@@ -1,6 +1,7 @@
 export type Slide = {
     bgImageKey: string;
     spriteKey: string,
+    character: string,
     dialogue: string,
     bgMusicKey: string | undefined;
 }
@@ -10,6 +11,7 @@ export default class CutScene extends Phaser.Scene {
     private enterKey: Phaser.Input.Keyboard.Key;
     private bg: Phaser.GameObjects.TileSprite;
     private dialogue: Phaser.GameObjects.Sprite;
+    private characterText: Phaser.GameObjects.Text;
     private dialogueText: Phaser.GameObjects.Text;
     private slides: Slide[];
     private currSlideIdx;
@@ -35,19 +37,30 @@ export default class CutScene extends Phaser.Scene {
         });
     }
 
-    init(): void {
+    init(data): void {
+        this.data = data;
         this.enterKey = this.input.keyboard.addKey(
             Phaser.Input.Keyboard.KeyCodes.ENTER
         );
+        this.characterText = this.add.text(
+            80,
+            420,
+            this.slides[0].character,
+            {
+                fontSize: 28,
+                wordWrap: {width: 600, useAdvancedWrap: true },
+            },
+        );
         this.dialogueText = this.add.text(
             100,
-            440,
+            450 + (this.slides.some(slide => slide.character.length > 40) ? 30 : 0),
             ``,
             {
                 fontSize: 24,
                 wordWrap: {width: 600, useAdvancedWrap: true },
             },
         );
+        this.characterText.setDepth(10);
         this.dialogueText.width = 600;
         this.dialogueText.height = 200;
         this.dialogueText.setDepth(10);
@@ -83,6 +96,7 @@ export default class CutScene extends Phaser.Scene {
         this.currSlideIdx++;
         this.bg.destroy();
         this.bg = this.add.tileSprite(400, 300, 800, 600, this.slides[this.currSlideIdx].bgImageKey);
+        this.characterText.setText(this.slides[this.currSlideIdx].character);
         this.dialogueText.setText('');
         this.dialogueTextTimer = this.time.addEvent({
             delay: 50,
@@ -101,7 +115,7 @@ export default class CutScene extends Phaser.Scene {
             const fullTextCurrDialogue = this.slides[this.currSlideIdx].dialogue;
             const fullTextShowing = this.dialogueText.text.length === fullTextCurrDialogue.length;
             if (this.currSlideIdx === this.slides.length-1 && fullTextShowing) {
-                this.scene.start(this.nextSceneKey);
+                this.scene.start(this.nextSceneKey, this.data);
                 return;
             }
             if (fullTextShowing) {

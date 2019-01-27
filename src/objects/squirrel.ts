@@ -9,6 +9,9 @@ export class Squirrel extends Fighter {
 	protected throwKey: Phaser.Input.Keyboard.Key;
     protected anim: Phaser.Tweens.Tween[];
     protected pointer: Phaser.GameObjects.Sprite;
+    protected acornThrow: Phaser.Sound.BaseSound;
+    protected squirrelCry: Phaser.Sound.BaseSound;
+    protected squirrelHit: Phaser.Sound.BaseSound;
 
     constructor(params) {
         super(params);
@@ -53,6 +56,10 @@ export class Squirrel extends Fighter {
         this.scene.add.existing(this.pointer);
         this.pointer.setScale(.25, .25);
         this.pointer.setOrigin(0,0.5);
+        
+        this.acornThrow = this.scene.sound.add('level3AcornThrow');
+        this.squirrelCry = this.scene.sound.add('level3SquirrelCry');
+        this.squirrelHit = this.scene.sound.add('level3SquirrelHit');
     }
 
     protected handleThrowOver(): void {
@@ -83,13 +90,19 @@ export class Squirrel extends Fighter {
         }
         this.pointer.angle = this.shootAngle;
 
-		if (this.throwKey.isDown && !this.isThrowing) {
+		if (Phaser.Input.Keyboard.JustDown(this.throwKey) && !this.isThrowing) {
 			this.isThrowing = true;
+            this.acornThrow.play();
 			this.throw();
 		}
     }
 
 	public getHit(): void {
-		console.log('i\'m hit - squirrel');
+        this.hp--;
+        this.squirrelHit.play();
+        this.squirrelCry.play();
+        if (this.hp <= 0) {
+            this.scene.scene.start('MainMenu');
+        }
 	}
 }

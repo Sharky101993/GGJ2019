@@ -15,6 +15,7 @@ export class WindScene extends Phaser.Scene {
     private scoreText: Phaser.GameObjects.Text;
     private hp: number;
     private impactSound: Phaser.Sound.BaseSound;
+    private music: Phaser.Sound.BaseSound;
 
     constructor() {
         super({
@@ -33,10 +34,12 @@ export class WindScene extends Phaser.Scene {
         this.score = -1;
         this.hp = 5;
         this.impactSound = this.sound.add('level1ImpactRock');
+        this.music = this.sound.add('level1Music');
     }
 
     create(): void {
         this.bg = this.add.tileSprite(400, 300, 800, 600, 'bg_wind');
+        this.music.play();
 
         this.scoreText = this.add.text(14, 30, '0', {
             fontFamily: 'Cavalcade-Shadow',
@@ -83,7 +86,7 @@ export class WindScene extends Phaser.Scene {
     }
 
     private endWindScene(): void {
-        this.scene.start('DrivingLevel', {hp: this.hp});
+        this.endGameWithScene('Act2', {hp: this.hp});
     }
 
     private addRocks(): void {
@@ -108,6 +111,18 @@ export class WindScene extends Phaser.Scene {
     }
 
     private restartGame(): void {
-        this.scene.start('MainMenu');
+        this.endGameWithScene('MainMenu', null);
+    }
+
+    private endGameWithScene(scene, data): void {
+        this.add.tween({
+            targets: this.music,
+            volume: 0,
+            duration: 300,
+            onComplete: () => {
+                this.music.destroy();
+                this.scene.start(scene, data);
+            },
+        })
     }
 }

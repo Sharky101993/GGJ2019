@@ -7,15 +7,19 @@ import { FightScene } from './scenes/FightScene';
 import { DrivingLevel } from './scenes/DrivingLevel';
 import { WindScene } from './scenes/WindScene';
 import { Act1 } from './scenes/cutscenes/Act1';
+import { Act2 } from './scenes/cutscenes/Act2';
+import { Act3 } from './scenes/cutscenes/Act3';
+import { Act4 } from './scenes/cutscenes/Act4';
+import { GameEnd } from './scenes/GameEnd';
 
 // main game configuration
 const config: GameConfig = {
   title: 'Where your Hat is',
   width: 800,
   height: 600,
-  type: Phaser.AUTO,
+  type: Phaser.WEBGL,
   parent: 'game',
-  scene: [Boot, MainMenu, Act1, WindScene, FightScene, DrivingLevel],
+  scene: [Boot, MainMenu, Act1, WindScene, Act2, FightScene, Act3, DrivingLevel, Act4, GameEnd],
   input: {
     keyboard: true,
     mouse: true,
@@ -30,7 +34,7 @@ const config: GameConfig = {
     }
   },
   backgroundColor: '#228B22',
-  render: { pixelArt: true, antialias: false, autoResize: false }
+  render: { pixelArt: false, antialias: false, autoResize: false }
 };
 
 // game class

@@ -1,0 +1,35 @@
+import CutScene, { Slide } from './CutScene.ts';
+
+
+const slideData: Slide[] = [
+    {
+        bgImageKey: 'fightingLevelBackground',
+        spriteKey: undefined,
+        character: ``,
+        dialogue: `[SIR QUERRELL TAKES HATTLEY TO THE DOORSTEP OF THE BOY]`,
+        bgMusicKey: undefined,
+    },
+    {
+        bgImageKey: 'fightingLevelBackground',
+        spriteKey: 'querrell',
+        character: `SIR QUERRELL, LAST RODENT OF THE ROUND TABLE`,
+        dialogue: `LORD HATTLEY, WE MADE IT.`,
+        bgMusicKey: undefined,
+    },
+    {
+        bgImageKey: 'fightingLevelBackground',
+        spriteKey: 'chappy',
+        character: `HATTLEY`,
+        dialogue: `HOME AT LAST! IT’S BEEN A LONG JOURNEY BUT I CAN FINALLY REST THESE WEARY THREADS.`,
+        bgMusicKey: undefined,
+    },
+];
+export class Act4 extends CutScene {
+    constructor() {
+        super({
+            key: 'Act4',
+            slides: slideData,
+            nextSceneKey: 'GameEnd',
+        });
+    }
+}

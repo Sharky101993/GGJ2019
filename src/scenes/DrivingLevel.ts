@@ -24,6 +24,7 @@ export class DrivingLevel extends Phaser.Scene {
     private coinSound: Phaser.Sound.BaseSound;
     private throwHatSound: Phaser.Sound.BaseSound;
     private throwBombSound: Phaser.Sound.BaseSound;
+    private music: Phaser.Sound.BaseSound;
 
     // variables
     private speed: number;
@@ -53,6 +54,7 @@ export class DrivingLevel extends Phaser.Scene {
         this.explodeSound = this.sound.add('level2Explosion');
         this.sirenSound = this.sound.add('level2Siren', {
             'loop': true,
+            'volume': 0.03,
         });
         this.engineSound = this.sound.add('level2Engine', {
             'loop': true,
@@ -60,11 +62,13 @@ export class DrivingLevel extends Phaser.Scene {
         this.coinSound = this.sound.add('level2CollectHat');
         this.throwHatSound = this.sound.add('level2ThrowHat');
         this.throwBombSound = this.sound.add('level2ThrowBomb');
+        this.music = this.sound.add('level2Music');
         this.playerWon = false;
     }
 
     create() {
         this.bg = this.add.tileSprite(400, 300, 800, 600, 'drivingLevelBackground');
+        this.music.play();
         this.hatCountText = this.add.text(
             10,
             10,
@@ -98,6 +102,7 @@ export class DrivingLevel extends Phaser.Scene {
             y: 90,
             key: 'caperCar'
         });
+        this.hatterCar.music = this.music;
         this.add.existing(this.hatterCar);
         this.throwingStuffTimer = this.time.addEvent({
             delay: 750,
@@ -182,6 +187,7 @@ export class DrivingLevel extends Phaser.Scene {
         this.explodeSound.play();
        const bomb = this.objectWithType(object1, object2, ITEM_TYPE_BOMB);
        this.hatPower--;
+       this.hatterCar.hp--;
        this.hatPowerText.setText(`Hat Power Left: ${this.hatPower}`);
        this.bombs.remove(bomb, true, true);
        // explosion
@@ -196,7 +202,8 @@ export class DrivingLevel extends Phaser.Scene {
        this.dropHats();
        if (this.hatPower === 0) {
            this.crazyExplosion(() => {
-            this.scene.start('WindScene', this.scene);
+            // this.scene.start('MainMenu', this.scene);
+            this.endGameWithScene('MainMenu', null);
            });
        }
     }
@@ -272,7 +279,7 @@ export class DrivingLevel extends Phaser.Scene {
             this.add.tween({
                 targets: this.sirenSound,
                 volume: 0,
-                duration: 6000,
+                duration: 2000,
                 onComplete: () => {
                     this.sirenSound.destroy();
                 },
@@ -303,6 +310,18 @@ export class DrivingLevel extends Phaser.Scene {
             },
             this
         );
+    }
+
+    private endGameWithScene(scene, data): void {
+        this.add.tween({
+            targets: this.music,
+            volume: 0,
+            duration: 300,
+            onComplete: () => {
+                this.music.destroy();
+                this.scene.start(scene, data);
+            },
+        })
     }
 }
 
@@ -395,6 +414,9 @@ class HatterCar extends Phaser.GameObjects.Sprite {
     private explodeSound: Phaser.Sound.BaseSound;
     private tireSkidSound: Phaser.Sound.BaseSound;
 
+    public hp: number;
+    public music: Phaser.Sound.BaseSound;
+
     constructor(params) {
         super(params.scene, params.x, params.y, params.key, params.frame);
 
@@ -419,6 +441,7 @@ class HatterCar extends Phaser.GameObjects.Sprite {
             'loop': true,
         });
         this.tireSkidSound = this.scene.sound.add('level2TireSkid');
+        this.hp = params.scene.hatPower;
     }
 
     private handleDirectionChange(): void {
@@ -527,7 +550,8 @@ class HatterCar extends Phaser.GameObjects.Sprite {
                     scaleY: 60,
                     onComplete: () => {
                         this.spinFinalHat = false;
-                        this.scene.scene.start('FightScene', this.scene.scene);
+                        this.endGameWithScene('Act3', {hp: this.hp});
+                        // this.scene.scene.start('Act3', {hp: this.hp});
                     }
                 });
                 this.spinFinalHat = true;
@@ -539,6 +563,18 @@ class HatterCar extends Phaser.GameObjects.Sprite {
             duration: 3000,
             onComplete: () => {
                 this.explodeSound.destroy();
+            },
+        })
+    }
+
+    private endGameWithScene(scene, data): void {
+        this.scene.add.tween({
+            targets: this.music,
+            volume: 0,
+            duration: 300,
+            onComplete: () => {
+                this.music.destroy();
+                this.scene.scene.start(scene, data);
             },
         })
     }

@@ -167,6 +167,36 @@
       },
       {
         "type": "image",
+        "key": "querrell",
+        "url": "assets/images/querrell.png"
+      },
+      {
+        "type": "image",
+        "key": "genghis",
+        "url": "assets/images/genghis.png"
+      },
+      {
+        "type": "image",
+        "key": "hatter",
+        "url": "assets/images/hatter.png"
+      },
+      {
+        "type": "image",
+        "key": "officer",
+        "url": "assets/images/officer.png"
+      },
+      {
+        "type": "image",
+        "key": "father",
+        "url": "assets/images/father.png"
+      },
+      {
+        "type": "image",
+        "key": "boy",
+        "url": "assets/images/boy.png"
+      },
+      {
+        "type": "image",
         "key": "chappy",
         "url": "assets/images/chappy.png"
       },
@@ -219,6 +249,46 @@
         "type": "audio",
         "key": "level2CollectHat",
         "url": "assets/audio/level_2/collect_hat.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "level3AcornThrow",
+        "url": "assets/audio/level_3/acorn_throw.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "level3RaccoonCry",
+        "url": "assets/audio/level_3/raccoon_cry.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "level3RaccoonHit",
+        "url": "assets/audio/level_3/raccoon_hit.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "level3SquirrelCry",
+        "url": "assets/audio/level_3/squirrel_cry.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "level3SquirrelHit",
+        "url": "assets/audio/level_3/squirrel_hit.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "level3TrashCanHit",
+        "url": "assets/audio/level_3/trash_can_hit.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "level1Music",
+        "url": "assets/audio/level_1/music.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "level2Music",
+        "url": "assets/audio/level_2/music.mp3"
       }
     ]
   }

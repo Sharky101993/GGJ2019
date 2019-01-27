@@ -8,6 +8,7 @@ export class Fighter extends Phaser.GameObjects.Sprite {
     protected shootAngle: number = 0;
     protected magnitude: number = 500;
     protected climbAnim: Phaser.Tweens.Tween;
+    protected hp: number;
 
     public projectiles: GameObjects.Group;
     public isFacingRight: boolean = false;
@@ -29,6 +30,8 @@ export class Fighter extends Phaser.GameObjects.Sprite {
 		this.body.allowGravity = false;
         this.body.setSize(80, 70);
 		this.body.colideWorldBounds = true;
+
+        this.hp = params.scene.hp;
 		
 		this.enemy = params.enemy;
 		this.projectiles = this.scene.add.group({classType: Projectile});
@@ -115,7 +118,6 @@ export class Fighter extends Phaser.GameObjects.Sprite {
 		});
 		this.projectiles.add(projectile);
         this.scene.add.existing(projectile);
-        console.log(this.shootAngle);
 		projectile.fire(this, {
             x: Math.cos(this.shootAngle * Math.PI/180)*this.magnitude,
             y: Math.sin(this.shootAngle * Math.PI/180)*this.magnitude

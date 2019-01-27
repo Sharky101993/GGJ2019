@@ -18,6 +18,7 @@ export class FightScene extends Phaser.Scene {
     private timer: Phaser.Time.TimerEvent;
     private score: number;
     private scoreText: Phaser.GameObjects.Text;
+    private hp: number;
 
     constructor() {
         super({
@@ -25,8 +26,9 @@ export class FightScene extends Phaser.Scene {
         });
     }
 
-    init(): void {
+    init(data): void {
         // objects
+        this.hp = data.hp;
         this.bird = null;
         this.pipes = this.add.group({ classType: Pipe });
 		this.acorns = this.add.group({classType: Projectile, runChildUpdate: true});

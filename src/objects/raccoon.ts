@@ -11,6 +11,9 @@ export class Raccoon extends Fighter {
     private isClimbingUp: Boolean;
     private shield: Phaser.GameObjects.Sprite;
     private stateText: Phaser.GameObjects.Text;
+    private trashCanHit: Phaser.Sound.BaseSound;
+    private raccoonCry: Phaser.Sound.BaseSound;
+    private raccoonHit: Phaser.Sound.BaseSound;
 
     public state: RaccoonState = RaccoonState.Shield;
 
@@ -41,12 +44,18 @@ export class Raccoon extends Fighter {
         // add pipe to scene
         this.scene.add.existing(this.shield);
 
-        this.stateText = this.scene.add.text(this.x, 30, this.state, {
+        this.hp = 3;
+
+        this.stateText = this.scene.add.text(this.x, 30, this.hp.toString(), {
             fontFamily: 'Cavalcade-Shadow',
             fontSize: 30
         });
         this.stateText.setDepth(2);
         this.shootAngle = -135;
+        
+        this.trashCanHit = this.scene.sound.add('level3TrashCanHit');
+        this.raccoonCry = this.scene.sound.add('level3RaccoonCry');
+        this.raccoonHit = this.scene.sound.add('level3RaccoonHit');
     }
 
     protected handleShieldOver(): void {
@@ -56,7 +65,6 @@ export class Raccoon extends Fighter {
         this.shield.x = this.x + 30;
         this.shield.setAngle(65);
         this.state = RaccoonState.Throw;
-        this.stateText.setText(this.state);
     }
     
     protected handleThrowOver(): void {
@@ -64,7 +72,6 @@ export class Raccoon extends Fighter {
         this.shield.x = this.x - 20;
         this.shield.setAngle(-45);
         this.state = RaccoonState.Shield;
-        this.stateText.setText(this.state);
     }
 
     private handleDirectionChange(): void {
@@ -76,7 +83,7 @@ export class Raccoon extends Fighter {
         super.update();
         this.shield.y = this.y - 10;
 
-        this.stateText.setText('' + this.shootAngle + ' ' + this.state);
+        this.stateText.setText('' + this.shootAngle + ' ' + String(this.hp));
         
 	}
 
@@ -93,9 +100,15 @@ export class Raccoon extends Fighter {
     }
 
 	public getHit(): void {
-        console.log('i\'m hit - raccoon');
-        if (this.state = RaccoonState.Throw) {
-            
+        if (this.state === RaccoonState.Throw) {
+            this.raccoonCry.play();
+            this.raccoonHit.play();
+            this.hp--;
+            if (this.hp <= 0) {
+                this.scene.scene.start('Act4');
+            }
+        } else {
+            this.trashCanHit.play();
         }
     }
 }
