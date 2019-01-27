@@ -50,9 +50,9 @@ export class WindScene extends Phaser.Scene {
 
         this.bird = new Bird({
             scene: this,
-            x: 0,
+            x: 50,
             y: 500,
-            key: 'bird'
+            key: 'chappy_wind'
         });
         this.physics.add.collider(this.bird, this.pipes, this.hitObstacle, null, this);
 
@@ -71,22 +71,7 @@ export class WindScene extends Phaser.Scene {
     }
 
     update(): void {
-        if (!this.bird.getDead()) {
-            this.bg.tilePositionX -= 1;
-            this.bird.update();
-        } else {
-            Phaser.Actions.Call(
-                this.pipes.getChildren(),
-                function(pipe) {
-                    pipe.body.setVelocityX(0);
-                },
-                this
-            );
-
-            if (this.bird.y > this.sys.canvas.height) {
-                this.restartGame();
-            }
-        }
+        this.bird.update();
     }
 
     private hitObstacle(): void {

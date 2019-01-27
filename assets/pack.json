@@ -161,6 +161,11 @@
         "url": "assets/images/chappy.png"
       },
       {
+        "type": "image",
+        "key": "chappy_wind",
+        "url": "assets/images/chappy_wind.png"
+      },
+      {
         "type": "audio",
         "key": "level1WindGust",
         "url": "assets/audio/level_1/wind_gust.mp3"
