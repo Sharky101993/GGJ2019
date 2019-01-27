@@ -102,8 +102,7 @@ export class Squirrel extends Fighter {
         this.squirrelHit.play();
         this.squirrelCry.play();
         if (this.hp <= 0) {
-            // this.scene.scene.start('MainMenu');
-            this.endGameWithScene('MainMenu');
+            this.endGameWithScene('GameOver');
         }
 	}
 

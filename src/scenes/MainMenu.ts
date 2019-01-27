@@ -6,7 +6,9 @@ export class MainMenu extends Phaser.Scene {
     private startFightKey: Phaser.Input.Keyboard.Key;
     private startDrivingKey: Phaser.Input.Keyboard.Key;
     private startKey: Phaser.Input.Keyboard.Key;
-    private texts: Phaser.GameObjects.Text[];
+    private bg: Phaser.GameObjects.TileSprite;
+    private titleText: Phaser.GameObjects.Sprite;
+    private music: Phaser.Sound.BaseSound;
 
     constructor() {
         super({
@@ -27,35 +29,41 @@ export class MainMenu extends Phaser.Scene {
         this.startKey = this.input.keyboard.addKey(
             Phaser.Input.Keyboard.KeyCodes.ENTER
         );
+        this.music = this.sound.add('titleTheme', {loop: true, volume: 0.5});
     }
 
     create() {
-        this.texts = [];
-        this.texts.push(
-            this.add.text(
-                this.sys.canvas.width / 2 - 300,
-                this.sys.canvas.height / 2 - 80,
-                'WHERE YOUR HAT IS',
-                {
-                    fontFamily: 'Cavalcade-Shadow',
-                    fontSize: 60,
-                }
-            )
-        );
+        this.music.play();
+        this.bg = this.add.tileSprite(400, 300, 800, 600, 'titleBg');
+        this.titleText = new Phaser.GameObjects.Sprite(this, this.sys.canvas.width / 2, this.sys.canvas.height / 2 + 150, 'title');
+        this.add.existing(this.titleText);
     }
 
     update() {
         if (this.startFightKey.isDown) {
-            this.scene.start('FightScene', {hp: 5});
+            this.transitionToScene('FightScene', {hp: 5});
         }
         if (this.startDrivingKey.isDown) {
-            this.scene.start('DrivingLevel', {hp: 5});
+            this.transitionToScene('DrivingLevel', {hp: 5});
         }
         if (this.startWindKey.isDown) {
-            this.scene.start('WindScene', {hp: 5});
+            this.transitionToScene('WindScene', {hp: 5});
         }
         if (this.startKey.isDown) {
-            this.scene.start('Act1');
+            this.transitionToScene('Act1', null);
         }
+    }
+
+    private transitionToScene(scene, data): void {
+        this.add.tween({
+            targets: this.music,
+            volume: 0,
+            duration: 300,
+            onComplete: () => {
+                this.music.stop();
+                this.music.destroy();
+                this.scene.start(scene, data);
+            },
+        })
     }
 }

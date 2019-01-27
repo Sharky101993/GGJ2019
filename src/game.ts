@@ -11,6 +11,7 @@ import { Act2 } from './scenes/cutscenes/Act2';
 import { Act3 } from './scenes/cutscenes/Act3';
 import { Act4 } from './scenes/cutscenes/Act4';
 import { GameEnd } from './scenes/GameEnd';
+import { GameOver } from './scenes/GameOver';
 
 // main game configuration
 const config: GameConfig = {
@@ -19,7 +20,7 @@ const config: GameConfig = {
   height: 600,
   type: Phaser.WEBGL,
   parent: 'game',
-  scene: [Boot, MainMenu, Act1, WindScene, Act2, FightScene, Act3, DrivingLevel, Act4, GameEnd],
+  scene: [Boot, MainMenu, Act1, WindScene, Act2, FightScene, Act3, DrivingLevel, Act4, GameEnd, GameOver],
   input: {
     keyboard: true,
     mouse: true,
@@ -33,7 +34,7 @@ const config: GameConfig = {
       debug: false,
     }
   },
-  backgroundColor: '#228B22',
+  backgroundColor: '#000000', // #228B22',
   render: { pixelArt: true, antialias: false, autoResize: false }
 };
 

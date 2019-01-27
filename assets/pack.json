@@ -18,6 +18,31 @@
       },
       {
         "type": "image",
+        "key": "title",
+        "url": "assets/images/title.png"
+      },
+      {
+        "type": "image",
+        "key": "titleBg",
+        "url": "assets/images/title_bg.png"
+      },
+      {
+        "type": "image",
+        "key": "close1",
+        "url": "assets/images/close1.png"
+      },
+      {
+        "type": "image",
+        "key": "close2",
+        "url": "assets/images/close2.png"
+      },
+      {
+        "type": "image",
+        "key": "closeBg",
+        "url": "assets/images/close_bg.png"
+      },
+      {
+        "type": "image",
         "key": "act1BG",
         "url": "assets/images/act1.png"
       },
@@ -224,6 +249,11 @@
         "type": "image",
         "key": "chappy",
         "url": "assets/images/chappy.png"
+      },
+      {
+        "type": "image",
+        "key": "deadHattley",
+        "url": "assets/images/deadHattley.png"
       },
       {
         "type": "image",
@@ -449,6 +479,16 @@
         "type": "audio",
         "key": "sq4",
         "url": "assets/audio/dialogue/SirQuerrell/4.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "gameOver",
+        "url": "assets/audio/top_level/game_over.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "titleTheme",
+        "url": "assets/audio/top_level/title_theme.mp3"
       }
     ]
   }

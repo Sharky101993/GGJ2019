@@ -212,8 +212,7 @@ export class DrivingLevel extends Phaser.Scene {
        this.dropHats();
        if (this.hatPower === 0) {
            this.crazyExplosion(() => {
-            // this.scene.start('MainMenu', this.scene);
-            this.endGameWithScene('MainMenu', null);
+            this.endGameWithScene('GameOver', null);
            });
        }
     }

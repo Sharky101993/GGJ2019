@@ -115,7 +115,7 @@ export class WindScene extends Phaser.Scene {
     }
 
     private restartGame(): void {
-        this.endGameWithScene('MainMenu', null);
+        this.endGameWithScene('GameOver', null);
     }
 
     private endGameWithScene(scene, data): void {
