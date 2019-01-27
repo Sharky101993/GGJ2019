@@ -12,6 +12,7 @@ export class FightScene extends Phaser.Scene {
     private pipes: Phaser.GameObjects.Group;
     private acorns: Phaser.GameObjects.Group;
     private bg: Phaser.GameObjects.TileSprite;
+    private trashCan: Phaser.GameObjects.Sprite;
 
     // variables
     private timer: Phaser.Time.TimerEvent;
@@ -40,7 +41,7 @@ export class FightScene extends Phaser.Scene {
     create(): void {
         this.bg = this.add.tileSprite(400, 300, 800, 600, 'fightingLevelBackground');
         this.bg.setScale(1);
-        //this.bg.tilePositionX += 50;
+        this.bg.tilePositionX += 50;
 
         this.scoreText = this.add.text(this.sys.canvas.width / 2 - 300, 30, 'TAKE OUT THAT \'COON GOON!', {
             fontFamily: 'Cavalcade-Shadow',
@@ -52,7 +53,7 @@ export class FightScene extends Phaser.Scene {
         this.raccoon = new Raccoon({
             scene: this,
             x: 670,
-            y: 100,
+            y: 420,
             key: 'raccoon'
         })
 
@@ -63,6 +64,17 @@ export class FightScene extends Phaser.Scene {
             key: 'squirrel',
             enemy: this.raccoon
         })
+
+        this.trashCan = new Phaser.GameObjects.Sprite(
+            this,
+            675,
+            490,
+            'can'
+        );
+
+        this.add.existing(this.trashCan);
+        this.trashCan.setDepth(20);
+        this.trashCan.setScale(.75);
 
         this.raccoon.setEnemy(this.squirrel);
 

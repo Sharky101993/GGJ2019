@@ -14,12 +14,17 @@
       {
         "type": "image",
         "key": "fightingLevelBackground",
-        "url": "assets/images/fighting_level_bg2.png"
+        "url": "assets/images/fighting_level_bg.png"
       },
       {
         "type": "image",
         "key": "trash",
         "url": "assets/images/trash.png"
+      },
+      {
+        "type": "image",
+        "key": "can",
+        "url": "assets/images/trashcan_base.png"
       },
       {
         "type": "image",
@@ -125,6 +130,11 @@
         "type": "image",
         "key": "shield",
         "url": "assets/images/shield.png"
+      },
+      {
+        "type": "image",
+        "key": "pointer",
+        "url": "assets/images/pointer.png"
       },
       {
         "type": "spritesheet",

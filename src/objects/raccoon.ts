@@ -46,11 +46,12 @@ export class Raccoon extends Fighter {
             fontSize: 30
         });
         this.stateText.setDepth(2);
+        this.shootAngle = -135;
     }
 
     protected handleShieldOver(): void {
         this.throwTimer.reset({ delay: 2000, callback: this.handleThrowOver, callbackScope: this, repeat: 1});
-        this.nextAmmo = Phaser.Math.Between(0,1) % 2 ? 'acorn' : 'trash';
+        this.nextAmmo = Phaser.Math.Between(0,1) % 2 ? 'sandwich' : 'trash';
         this.throw();
         this.shield.x = this.x + 30;
         this.shield.setAngle(65);
@@ -74,11 +75,21 @@ export class Raccoon extends Fighter {
     update(): void {
         super.update();
         this.shield.y = this.y - 10;
+
+        this.stateText.setText('' + this.shootAngle + ' ' + this.state);
         
 	}
 
     protected handleMove(): void {
-        this.climb(this.isClimbingUp ? -300 : 300);
+        this.climb(0);
+        
+        if (this.isClimbingUp && this.shootAngle > -180) {
+            this.magnitude = 500;
+            this.shootAngle -= 1;
+		} else if (!this.isClimbingUp && this.shootAngle < -110) {
+            this.magnitude = 600;
+            this.shootAngle += 2;
+        }
     }
 
 	public getHit(): void {
@@ -86,7 +97,7 @@ export class Raccoon extends Fighter {
         if (this.state = RaccoonState.Throw) {
             
         }
-	}
+    }
 }
 class Shield extends Phaser.GameObjects.Sprite {
     constructor(params) {

@@ -5,6 +5,8 @@ export class Fighter extends Phaser.GameObjects.Sprite {
 	protected isThrowing: boolean = true;
     protected throwTimer;
     protected nextAmmo: string = 'sandwich';
+    protected shootAngle: number = 0;
+    protected magnitude: number = 500;
     protected climbAnim: Phaser.Tweens.Tween;
 
     public projectiles: GameObjects.Group;
@@ -112,7 +114,11 @@ export class Fighter extends Phaser.GameObjects.Sprite {
 			visible: true
 		});
 		this.projectiles.add(projectile);
-		this.scene.add.existing(projectile);
-		projectile.fire(this, {x: this.isFacingRight ? 600 : -600 , y: -150});
+        this.scene.add.existing(projectile);
+        console.log(this.shootAngle);
+		projectile.fire(this, {
+            x: Math.cos(this.shootAngle * Math.PI/180)*this.magnitude,
+            y: Math.sin(this.shootAngle * Math.PI/180)*this.magnitude
+        });
 	}
 }
