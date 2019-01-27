@@ -24,7 +24,6 @@ export class Squirrel extends Fighter {
             // })
 		];
 
-        this.magnitude = 100
 
         // input
         this.climbUpKey = params.scene.input.keyboard.addKey(
